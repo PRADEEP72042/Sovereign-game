@@ -1,0 +1,3054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOVEREIGN: The Lone Leader</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
+
+  :root {
+    --bg: #0a0c10;
+    --panel: #0d1117;
+    --panel2: #111820;
+    --border: #1e3a4a;
+    --accent: #00c8ff;
+    --accent2: #ff6b00;
+    --accent3: #00ff88;
+    --accent4: #ffd700;
+    --danger: #ff3366;
+    --text: #c8d8e8;
+    --text2: #6a8a9a;
+    --grid-color: #0f2030;
+    --tile: 52px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    user-select: none;
+  }
+
+  /* ── HEADER ── */
+  #header {
+    background: linear-gradient(90deg, #000 0%, #0d1117 40%, #0d1117 60%, #000 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 6px 16px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-shrink: 0;
+    position: relative;
+  }
+  #header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  }
+  .logo {
+    font-family: 'Orbitron', monospace;
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--accent);
+    letter-spacing: 4px;
+    text-shadow: 0 0 20px var(--accent);
+    flex-shrink: 0;
+  }
+  .logo span { color: var(--accent2); }
+
+  .stat-bar {
+    display: flex;
+    gap: 12px;
+    flex: 1;
+    flex-wrap: wrap;
+  }
+  .stat {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(0,200,255,0.05);
+    border: 1px solid var(--border);
+    padding: 3px 10px;
+    border-radius: 2px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+  }
+  .stat-icon { font-size: 14px; }
+  .stat-label { color: var(--text2); font-size: 10px; }
+  .stat-val { color: var(--accent); font-weight: 700; }
+  .stat-val.good { color: var(--accent3); }
+  .stat-val.warn { color: var(--accent4); }
+  .stat-val.bad  { color: var(--danger); }
+
+  #trade-btn {
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    background: linear-gradient(135deg, #1a1000, #332000);
+    border: 1px solid var(--accent4);
+    color: var(--accent4);
+    padding: 6px 16px;
+    cursor: pointer;
+    letter-spacing: 2px;
+    border-radius: 2px;
+    transition: all .2s;
+    text-shadow: 0 0 10px var(--accent4);
+    flex-shrink: 0;
+  }
+  #trade-btn:hover { background: var(--accent4); color: #000; box-shadow: 0 0 20px var(--accent4); }
+
+  #turn-btn {
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    background: linear-gradient(135deg, #003344, #005566);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    padding: 6px 16px;
+    cursor: pointer;
+    letter-spacing: 2px;
+    border-radius: 2px;
+    transition: all .2s;
+    text-shadow: 0 0 10px var(--accent);
+    flex-shrink: 0;
+  }
+  #turn-btn:hover { background: var(--accent); color: #000; box-shadow: 0 0 20px var(--accent); }
+
+  /* ── MAIN AREA ── */
+  #main {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  /* ── LEFT PANEL ── */
+  #left-panel {
+    width: 200px;
+    background: var(--panel);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    overflow-y: auto;
+  }
+  .panel-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: var(--text2);
+    padding: 8px 12px 4px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .build-category {
+    padding: 4px 0;
+    border-bottom: 1px solid #0f1a22;
+  }
+  .cat-title {
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--text2);
+    padding: 6px 12px 2px;
+    text-transform: uppercase;
+  }
+  .build-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    cursor: pointer;
+    border-radius: 0;
+    transition: all .15s;
+    font-size: 12px;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    border: none;
+    background: none;
+    color: var(--text);
+    width: 100%;
+    text-align: left;
+  }
+  .build-btn:hover { background: rgba(0,200,255,0.08); color: var(--accent); }
+  .build-btn.active { background: rgba(0,200,255,0.15); color: var(--accent); border-left: 2px solid var(--accent); }
+  .build-btn .bicon { font-size: 16px; width: 20px; text-align: center; }
+  .build-btn .bcost { margin-left: auto; font-size: 10px; color: var(--accent4); font-family: 'Share Tech Mono', monospace; }
+
+  /* ── MAP ── */
+  #map-wrap {
+    flex: 1;
+    overflow: auto;
+    background:
+      repeating-linear-gradient(0deg, var(--grid-color) 0, var(--grid-color) 1px, transparent 1px, transparent var(--tile)),
+      repeating-linear-gradient(90deg, var(--grid-color) 0, var(--grid-color) 1px, transparent 1px, transparent var(--tile)),
+      radial-gradient(ellipse at 50% 50%, #061218 0%, #030608 100%);
+    position: relative;
+    cursor: crosshair;
+  }
+  #map {
+    position: relative;
+    display: inline-grid;
+    min-width: 100%;
+    min-height: 100%;
+  }
+
+  .tile {
+    width: var(--tile);
+    height: var(--tile);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    position: relative;
+    transition: background .1s;
+    border: 1px solid transparent;
+  }
+  .tile:hover { background: rgba(0,200,255,0.08); border-color: rgba(0,200,255,0.2); }
+  .tile.has-building { cursor: pointer; }
+  .tile.has-building:hover { background: rgba(0,200,255,0.12); }
+  .tile .tlvl {
+    position: absolute; bottom: 1px; right: 2px;
+    font-size: 8px; color: var(--accent4); font-family: 'Share Tech Mono', monospace;
+  }
+  .tile .tpop {
+    position: absolute; top: 1px; left: 2px;
+    font-size: 7px; color: var(--accent3); font-family: 'Share Tech Mono', monospace;
+  }
+
+  /* Road tiles */
+  .tile.road { background: rgba(80,80,80,0.3); }
+  .tile.road::before {
+    content: '';
+    position: absolute; inset: 35% 5%;
+    background: #333;
+    border-radius: 2px;
+  }
+
+  /* ── RIGHT PANEL ── */
+  #right-panel {
+    width: 240px;
+    background: var(--panel);
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    overflow-y: auto;
+  }
+
+  .info-section {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .info-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--text2);
+    margin-bottom: 8px;
+  }
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2px 0;
+    font-size: 12px;
+  }
+  .info-key { color: var(--text2); }
+  .info-val { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--accent3); }
+  .info-val.warn { color: var(--accent4); }
+  .info-val.bad { color: var(--danger); }
+
+  .progress-bar {
+    height: 4px;
+    background: #1a2a3a;
+    border-radius: 2px;
+    margin: 3px 0 6px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width .5s;
+  }
+
+  /* Events */
+  #events-panel {
+    padding: 8px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+    overflow-y: auto;
+  }
+  .event-card {
+    background: rgba(255,51,102,0.08);
+    border: 1px solid rgba(255,51,102,0.3);
+    border-radius: 2px;
+    padding: 8px 10px;
+    font-size: 11px;
+    animation: slideIn .3s ease;
+  }
+  .event-card.info { background: rgba(0,200,255,0.06); border-color: rgba(0,200,255,0.25); }
+  .event-card.good { background: rgba(0,255,136,0.06); border-color: rgba(0,255,136,0.25); }
+  .event-title { font-weight: 700; color: var(--danger); margin-bottom: 3px; font-size: 12px; }
+  .event-card.info .event-title { color: var(--accent); }
+  .event-card.good .event-title { color: var(--accent3); }
+  .event-desc { color: var(--text2); line-height: 1.4; }
+
+  .choice-btn {
+    margin-top: 6px;
+    padding: 4px 10px;
+    font-size: 10px;
+    font-family: 'Orbitron', monospace;
+    background: rgba(0,200,255,0.1);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    cursor: pointer;
+    border-radius: 1px;
+    display: block;
+    width: 100%;
+    text-align: left;
+    margin-bottom: 2px;
+    transition: all .15s;
+  }
+  .choice-btn:hover { background: var(--accent); color: #000; }
+
+  /* ── BOTTOM ── */
+  #bottom-bar {
+    height: 28px;
+    background: var(--panel);
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 20px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--text2);
+    flex-shrink: 0;
+  }
+  #status-msg { color: var(--accent3); }
+  .year-display { color: var(--accent4); margin-left: auto; }
+
+  /* ── TOOLTIP ── */
+  #tooltip {
+    position: fixed;
+    background: #0d1520;
+    border: 1px solid var(--accent);
+    padding: 8px 12px;
+    font-size: 11px;
+    font-family: 'Share Tech Mono', monospace;
+    pointer-events: none;
+    z-index: 1000;
+    display: none;
+    min-width: 140px;
+    box-shadow: 0 0 20px rgba(0,200,255,0.2);
+  }
+  #tooltip .tt-name { font-size: 13px; color: var(--accent); font-family: 'Rajdhani'; font-weight: 700; margin-bottom: 4px; }
+  #tooltip .tt-row { display: flex; justify-content: space-between; gap: 20px; color: var(--text2); }
+  #tooltip .tt-val { color: var(--accent3); }
+
+  /* ── MODAL ── */
+  #modal {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 500;
+    display: none;
+  }
+  #modal-box {
+    background: var(--panel);
+    border: 1px solid var(--accent);
+    padding: 24px;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 0 40px rgba(0,200,255,0.2);
+  }
+  #modal-box h2 { font-family: 'Orbitron'; color: var(--accent); margin-bottom: 12px; font-size: 16px; }
+  #modal-box p { color: var(--text2); font-size: 13px; line-height: 1.6; margin-bottom: 16px; }
+  .modal-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+  .modal-btn {
+    flex: 1; padding: 8px; font-family: 'Orbitron'; font-size: 10px; letter-spacing: 1px;
+    cursor: pointer; border-radius: 1px; transition: all .2s;
+  }
+  .modal-btn.primary { background: var(--accent); color: #000; border: none; }
+  .modal-btn.primary:hover { box-shadow: 0 0 20px var(--accent); }
+  .modal-btn.secondary { background: transparent; color: var(--text2); border: 1px solid var(--border); }
+  .modal-btn.secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+  #trade-btn {
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    background: linear-gradient(135deg, #002a1a, #004430);
+    border: 1px solid var(--accent3);
+    color: var(--accent3);
+    padding: 6px 14px;
+    cursor: pointer;
+    letter-spacing: 2px;
+    border-radius: 2px;
+    transition: all .2s;
+    flex-shrink: 0;
+  }
+  #trade-btn:hover { background: var(--accent3); color: #000; box-shadow: 0 0 20px var(--accent3); }
+
+  #politics-btn {
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    background: linear-gradient(135deg, #1a0030, #2d0050);
+    border: 1px solid #b060ff;
+    color: #b060ff;
+    padding: 6px 16px;
+    cursor: pointer;
+    letter-spacing: 2px;
+    border-radius: 2px;
+    transition: all .2s;
+    text-shadow: 0 0 10px #b060ff;
+    flex-shrink: 0;
+  }
+  #politics-btn:hover { background: #b060ff; color: #000; box-shadow: 0 0 20px #b060ff; }
+
+  /* ── POLITICS SCREEN ── */
+  #politics-screen {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.92);
+    z-index: 600;
+    display: none;
+    flex-direction: column;
+    font-family: 'Rajdhani', sans-serif;
+  }
+  #politics-screen.open { display: flex; }
+
+  #pol-header {
+    background: linear-gradient(90deg, #000, #0d0520, #0d0520, #000);
+    border-bottom: 1px solid #b060ff;
+    padding: 10px 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    position: relative;
+    flex-shrink: 0;
+  }
+  #pol-header::after {
+    content:''; position:absolute; bottom:0; left:0; right:0; height:1px;
+    background: linear-gradient(90deg, transparent, #b060ff, transparent);
+  }
+  .pol-logo {
+    font-family: 'Orbitron'; font-size:16px; font-weight:900;
+    color:#b060ff; letter-spacing:4px; text-shadow: 0 0 20px #b060ff;
+  }
+  .pol-approval-big {
+    margin-left: auto;
+    text-align: center;
+    font-family: 'Share Tech Mono';
+  }
+  .pol-approval-num {
+    font-size: 28px; font-weight:900; line-height:1;
+  }
+  .pol-approval-label { font-size:9px; letter-spacing:2px; color:var(--text2); }
+  #pol-close {
+    font-family:'Orbitron'; font-size:10px; background:transparent;
+    border:1px solid var(--danger); color:var(--danger);
+    padding:6px 14px; cursor:pointer; letter-spacing:2px; transition:all .2s;
+  }
+  #pol-close:hover { background:var(--danger); color:#fff; }
+
+  #pol-body { display:flex; flex:1; overflow:hidden; }
+
+  #pol-tabs {
+    width:160px; background:#060410; border-right:1px solid var(--border);
+    display:flex; flex-direction:column; padding:12px 0; gap:2px; flex-shrink:0;
+  }
+  .pol-tab {
+    padding:10px 16px; font-size:12px; font-weight:600;
+    cursor:pointer; color:var(--text2); border-left:2px solid transparent;
+    transition:all .15s; display:flex; align-items:center; gap:8px;
+  }
+  .pol-tab:hover { color:#b060ff; background:rgba(176,96,255,0.05); }
+  .pol-tab.active { color:#b060ff; border-left-color:#b060ff; background:rgba(176,96,255,0.1); }
+
+  #pol-content { flex:1; overflow-y:auto; padding:20px 24px; }
+
+  #pol-sidebar {
+    width:220px; background:#060410; border-left:1px solid var(--border);
+    padding:16px 14px; overflow-y:auto; flex-shrink:0;
+  }
+
+  .pol-section-title {
+    font-family:'Orbitron'; font-size:9px; letter-spacing:3px;
+    color:#b060ff; margin-bottom:14px; padding-bottom:6px;
+    border-bottom:1px solid rgba(176,96,255,0.25);
+  }
+
+  /* Approval bar */
+  .approval-meter {
+    height:8px; background:#1a0d2e; border-radius:4px; overflow:hidden; margin:6px 0 14px;
+  }
+  .approval-fill { height:100%; border-radius:4px; transition:width .6s; }
+
+  /* Cabinet */
+  .cabinet-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px; }
+  .minister-card {
+    background:#0d0820; border:1px solid var(--border); padding:12px;
+    border-radius:2px; transition:border-color .2s; position:relative;
+  }
+  .minister-card:hover { border-color:#b060ff; }
+  .min-avatar { font-size:28px; margin-bottom:6px; }
+  .min-name { font-size:13px; font-weight:700; color:var(--text); margin-bottom:2px; }
+  .min-role { font-size:10px; color:#b060ff; letter-spacing:1px; font-family:'Share Tech Mono'; }
+  .min-stat { font-size:11px; color:var(--text2); margin-top:6px; font-family:'Share Tech Mono'; }
+  .min-loyalty { display:flex; gap:2px; margin-top:5px; }
+  .min-dot { width:7px; height:7px; border-radius:50%; background:var(--border); }
+  .min-dot.f { background:#b060ff; }
+  .min-actions { display:flex; gap:4px; margin-top:8px; }
+  .min-btn {
+    flex:1; padding:4px 6px; font-size:9px; font-family:'Orbitron';
+    cursor:pointer; border-radius:1px; transition:all .15s; letter-spacing:1px;
+  }
+  .min-btn.fire { background:rgba(255,51,102,0.1); border:1px solid var(--danger); color:var(--danger); }
+  .min-btn.fire:hover { background:var(--danger); color:#fff; }
+  .min-btn.promote { background:rgba(176,96,255,0.1); border:1px solid #b060ff; color:#b060ff; }
+  .min-btn.promote:hover { background:#b060ff; color:#000; }
+  .corruption-badge {
+    position:absolute; top:8px; right:8px;
+    font-size:9px; font-family:'Share Tech Mono';
+    background:rgba(255,51,102,0.15); border:1px solid rgba(255,51,102,0.4);
+    color:var(--danger); padding:1px 5px; border-radius:2px;
+  }
+
+  /* Parliament */
+  .parliament-seats {
+    display:flex; flex-wrap:wrap; gap:3px;
+    background:#050210; border:1px solid var(--border);
+    padding:14px; border-radius:4px; margin-bottom:16px;
+    justify-content:center;
+  }
+  .seat { width:12px; height:12px; border-radius:50%; border:1px solid rgba(255,255,255,0.1); }
+
+  .party-legend { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:16px; }
+  .party-item { display:flex; align-items:center; gap:6px; font-size:12px; }
+  .party-dot { width:12px; height:12px; border-radius:50%; }
+
+  /* Bills */
+  .bill-list { display:flex; flex-direction:column; gap:10px; }
+  .bill-card {
+    background:#0d0820; border:1px solid var(--border);
+    padding:14px 16px; border-radius:2px; transition:border-color .15s;
+  }
+  .bill-card:hover { border-color:#b060ff; }
+  .bill-top { display:flex; align-items:center; gap:10px; margin-bottom:6px; }
+  .bill-icon { font-size:22px; }
+  .bill-name { font-size:14px; font-weight:700; flex:1; }
+  .bill-support {
+    font-family:'Share Tech Mono'; font-size:11px; padding:2px 8px;
+    border-radius:2px; border:1px solid;
+  }
+  .bill-support.pass { color:var(--accent3); border-color:rgba(0,255,136,0.4); background:rgba(0,255,136,0.08); }
+  .bill-support.fail { color:var(--danger); border-color:rgba(255,51,102,0.4); background:rgba(255,51,102,0.08); }
+  .bill-support.close { color:var(--accent4); border-color:rgba(255,215,0,0.4); background:rgba(255,215,0,0.08); }
+  .bill-desc { font-size:12px; color:var(--text2); margin-bottom:10px; line-height:1.5; }
+  .bill-effect { font-size:11px; font-family:'Share Tech Mono'; margin-bottom:10px; }
+  .bill-actions { display:flex; gap:8px; }
+  .bill-pass-btn {
+    padding:6px 16px; font-family:'Orbitron'; font-size:10px; letter-spacing:1px;
+    cursor:pointer; border-radius:1px; transition:all .15s;
+    background:rgba(176,96,255,0.12); border:1px solid #b060ff; color:#b060ff;
+  }
+  .bill-pass-btn:hover { background:#b060ff; color:#000; }
+  .bill-lobby-btn {
+    padding:6px 14px; font-family:'Orbitron'; font-size:10px; letter-spacing:1px;
+    cursor:pointer; border-radius:1px; transition:all .15s;
+    background:rgba(255,215,0,0.1); border:1px solid var(--accent4); color:var(--accent4);
+  }
+  .bill-lobby-btn:hover { background:var(--accent4); color:#000; }
+  .bill-reject-btn {
+    padding:6px 14px; font-family:'Orbitron'; font-size:10px; letter-spacing:1px;
+    cursor:pointer; border-radius:1px; transition:all .15s;
+    background:rgba(255,51,102,0.1); border:1px solid var(--danger); color:var(--danger);
+  }
+  .bill-reject-btn:hover { background:var(--danger); color:#fff; }
+
+  /* Election */
+  .election-card {
+    background:#0d0820; border:2px solid #b060ff;
+    padding:20px; border-radius:4px; text-align:center;
+    box-shadow: 0 0 30px rgba(176,96,255,0.2);
+  }
+  .election-title { font-family:'Orbitron'; font-size:18px; color:#b060ff; margin-bottom:12px; letter-spacing:3px; }
+  .candidate-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin:16px 0; }
+  .candidate-card {
+    background:#060410; border:1px solid var(--border); padding:14px;
+    border-radius:2px; cursor:pointer; transition:all .2s;
+  }
+  .candidate-card:hover { border-color:#b060ff; background:rgba(176,96,255,0.08); }
+  .candidate-card.you { border-color:#b060ff; background:rgba(176,96,255,0.12); }
+  .cand-avatar { font-size:36px; margin-bottom:8px; }
+  .cand-name { font-size:14px; font-weight:700; }
+  .cand-party { font-size:10px; font-family:'Share Tech Mono'; margin-top:2px; }
+  .cand-poll { font-size:20px; font-family:'Share Tech Mono'; color:#b060ff; margin:8px 0; }
+  .vote-btn {
+    width:100%; padding:8px; font-family:'Orbitron'; font-size:10px; letter-spacing:1px;
+    cursor:pointer; border-radius:1px; transition:all .2s; margin-top:6px;
+    background:rgba(176,96,255,0.15); border:1px solid #b060ff; color:#b060ff;
+  }
+  .vote-btn:hover { background:#b060ff; color:#000; box-shadow:0 0 20px #b060ff; }
+
+  /* Scandal */
+  .scandal-card {
+    background:rgba(255,51,102,0.06); border:1px solid rgba(255,51,102,0.35);
+    padding:12px 14px; border-radius:2px; margin-bottom:8px;
+  }
+  .scandal-title { font-size:13px; font-weight:700; color:var(--danger); margin-bottom:4px; }
+  .scandal-desc { font-size:11px; color:var(--text2); }
+  .scandal-resolve { margin-top:8px; padding:5px 14px; font-family:'Orbitron'; font-size:9px;
+    cursor:pointer; border:1px solid var(--danger); background:transparent;
+    color:var(--danger); transition:all .15s; border-radius:1px; }
+  .scandal-resolve:hover { background:var(--danger); color:#fff; }
+
+  /* Sidebar stats */
+  .ps-row { display:flex; justify-content:space-between; padding:4px 0; font-size:12px; border-bottom:1px solid #0d1a22; }
+  .ps-key { color:var(--text2); }
+  .ps-val { font-family:'Share Tech Mono'; font-size:11px; color:#b060ff; }
+</style>
+  #trade-screen {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.92);
+    z-index: 600;
+    display: none;
+    flex-direction: column;
+    font-family: 'Rajdhani', sans-serif;
+  }
+  #trade-screen.open { display: flex; }
+
+  #trade-header {
+    background: linear-gradient(90deg, #000, #061510, #061510, #000);
+    border-bottom: 1px solid var(--accent3);
+    padding: 10px 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    position: relative;
+  }
+  #trade-header::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent3), transparent);
+  }
+  .trade-logo {
+    font-family: 'Orbitron', monospace;
+    font-size: 16px;
+    font-weight: 900;
+    color: var(--accent3);
+    letter-spacing: 4px;
+    text-shadow: 0 0 20px var(--accent3);
+  }
+  .trade-budget-display {
+    margin-left: auto;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 14px;
+    color: var(--accent4);
+  }
+  #trade-close {
+    font-family: 'Orbitron', monospace;
+    font-size: 10px;
+    background: transparent;
+    border: 1px solid var(--danger);
+    color: var(--danger);
+    padding: 6px 14px;
+    cursor: pointer;
+    letter-spacing: 2px;
+    transition: all .2s;
+  }
+  #trade-close:hover { background: var(--danger); color: #fff; }
+
+  #trade-body {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    gap: 0;
+  }
+
+  /* ── TRADE TABS ── */
+  #trade-tabs {
+    width: 160px;
+    background: #060e10;
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 12px 0;
+    gap: 2px;
+    flex-shrink: 0;
+  }
+  .trade-tab {
+    padding: 10px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--text2);
+    border-left: 2px solid transparent;
+    transition: all .15s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .trade-tab:hover { color: var(--accent3); background: rgba(0,255,136,0.05); }
+  .trade-tab.active { color: var(--accent3); border-left-color: var(--accent3); background: rgba(0,255,136,0.08); }
+
+  /* ── TRADE CONTENT ── */
+  #trade-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 24px;
+  }
+
+  .trade-section-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--accent3);
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(0,255,136,0.2);
+  }
+
+  /* Market table */
+  .market-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .commodity-card {
+    background: #0a1518;
+    border: 1px solid var(--border);
+    padding: 14px;
+    border-radius: 2px;
+    transition: border-color .2s;
+  }
+  .commodity-card:hover { border-color: var(--accent3); }
+  .com-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .com-icon { font-size: 22px; }
+  .com-name { font-size: 14px; font-weight: 700; }
+  .com-stock { font-size: 10px; color: var(--text2); font-family: 'Share Tech Mono', monospace; }
+  .com-price {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 20px;
+    color: var(--accent4);
+    margin-bottom: 4px;
+  }
+  .com-trend {
+    font-size: 11px;
+    font-family: 'Share Tech Mono', monospace;
+    margin-bottom: 10px;
+  }
+  .com-trend.up { color: var(--accent3); }
+  .com-trend.down { color: var(--danger); }
+  .com-actions { display: flex; gap: 6px; }
+  .trade-action-btn {
+    flex: 1;
+    padding: 5px;
+    font-size: 10px;
+    font-family: 'Orbitron', monospace;
+    cursor: pointer;
+    border-radius: 1px;
+    transition: all .15s;
+    letter-spacing: 1px;
+  }
+  .trade-action-btn.buy { background: rgba(0,200,255,0.1); border: 1px solid var(--accent); color: var(--accent); }
+  .trade-action-btn.buy:hover { background: var(--accent); color: #000; }
+  .trade-action-btn.sell { background: rgba(0,255,136,0.1); border: 1px solid var(--accent3); color: var(--accent3); }
+  .trade-action-btn.sell:hover { background: var(--accent3); color: #000; }
+  .trade-action-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  /* Trade Partners */
+  .partner-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+  .partner-card {
+    background: #0a1518;
+    border: 1px solid var(--border);
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border-radius: 2px;
+    transition: border-color .2s;
+  }
+  .partner-card:hover { border-color: rgba(0,255,136,0.4); }
+  .partner-flag { font-size: 28px; }
+  .partner-info { flex: 1; }
+  .partner-name { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
+  .partner-rel { font-size: 11px; font-family: 'Share Tech Mono'; }
+  .partner-rel.good { color: var(--accent3); }
+  .partner-rel.neutral { color: var(--accent4); }
+  .partner-rel.bad { color: var(--danger); }
+  .partner-vol { font-size: 11px; color: var(--text2); font-family: 'Share Tech Mono'; }
+  .partner-actions { display: flex; gap: 6px; flex-direction: column; }
+  .partner-btn {
+    padding: 5px 12px;
+    font-size: 9px;
+    font-family: 'Orbitron', monospace;
+    cursor: pointer;
+    border-radius: 1px;
+    transition: all .15s;
+    letter-spacing: 1px;
+    white-space: nowrap;
+  }
+  .partner-btn.deal { background: rgba(0,255,136,0.1); border: 1px solid var(--accent3); color: var(--accent3); }
+  .partner-btn.deal:hover { background: var(--accent3); color: #000; }
+  .partner-btn.sanction { background: rgba(255,51,102,0.1); border: 1px solid var(--danger); color: var(--danger); }
+  .partner-btn.sanction:hover { background: var(--danger); color: #fff; }
+  .partner-btn:disabled { opacity:0.35; cursor:not-allowed; }
+
+  /* Trade routes */
+  .route-list { display: flex; flex-direction: column; gap: 8px; }
+  .route-card {
+    background: #0a1518;
+    border: 1px solid var(--border);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-radius: 2px;
+  }
+  .route-from, .route-to { font-size: 13px; font-weight: 700; }
+  .route-arrow { color: var(--accent3); font-size: 16px; }
+  .route-mode { font-size: 18px; }
+  .route-income { margin-left: auto; font-family: 'Share Tech Mono'; font-size: 12px; color: var(--accent3); }
+  .route-cancel { 
+    padding: 4px 10px; font-size: 9px; font-family: 'Orbitron';
+    background: transparent; border: 1px solid var(--danger); color: var(--danger);
+    cursor: pointer; transition: all .15s;
+  }
+  .route-cancel:hover { background: var(--danger); color: #fff; }
+
+  /* Policy panel */
+  .policy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .policy-card {
+    background: #0a1518;
+    border: 1px solid var(--border);
+    padding: 14px;
+    border-radius: 2px;
+  }
+  .policy-name { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .policy-desc { font-size: 11px; color: var(--text2); margin-bottom: 10px; line-height: 1.5; }
+  .policy-effect { font-size: 11px; font-family: 'Share Tech Mono'; margin-bottom: 10px; }
+  .policy-effect .pos { color: var(--accent3); }
+  .policy-effect .neg { color: var(--danger); }
+  .policy-toggle {
+    width: 100%; padding: 6px; font-family: 'Orbitron'; font-size: 9px; letter-spacing: 1px;
+    cursor: pointer; border-radius: 1px; transition: all .2s;
+  }
+  .policy-toggle.on { background: rgba(0,255,136,0.15); border: 1px solid var(--accent3); color: var(--accent3); }
+  .policy-toggle.off { background: rgba(255,51,102,0.1); border: 1px solid #444; color: var(--text2); }
+  .policy-toggle.on:hover { background: var(--accent3); color: #000; }
+  .policy-toggle.off:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* Trade log */
+  .trade-log { display: flex; flex-direction: column; gap: 6px; }
+  .log-entry {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 10px;
+    background: #0a1518;
+    border-left: 2px solid var(--border);
+    font-size: 12px;
+    font-family: 'Share Tech Mono';
+  }
+  .log-entry.export { border-left-color: var(--accent3); }
+  .log-entry.import { border-left-color: var(--accent); }
+  .log-entry.deal { border-left-color: var(--accent4); }
+  .log-year { color: var(--text2); min-width: 40px; }
+  .log-msg { flex: 1; color: var(--text); }
+  .log-amount { color: var(--accent4); }
+
+  /* Right sidebar in trade */
+  #trade-sidebar {
+    width: 220px;
+    background: #060e10;
+    border-left: 1px solid var(--border);
+    padding: 16px 14px;
+    overflow-y: auto;
+    flex-shrink: 0;
+  }
+  .ts-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--text2);
+    margin-bottom: 10px;
+  }
+  .ts-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 4px 0; font-size: 12px; border-bottom: 1px solid #0d1a22;
+  }
+  .ts-key { color: var(--text2); }
+  .ts-val { font-family: 'Share Tech Mono'; font-size: 11px; }
+
+  .sparkline {
+    height: 40px; margin: 10px 0;
+    display: flex; align-items: flex-end; gap: 2px;
+  }
+  .spark-bar {
+    flex: 1; background: var(--accent3);
+    opacity: 0.6; border-radius: 1px 1px 0 0;
+    transition: height .3s;
+    min-height: 2px;
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes pulse {
+    0%,100% { opacity: 1; } 50% { opacity: .5; }
+  }
+  .blink { animation: pulse 1.5s infinite; }
+
+  /* ── MILITARY & SAVE BUTTONS ── */
+  #military-btn {
+    font-family:'Orbitron',monospace; font-size:11px;
+    background:linear-gradient(135deg,#1a0500,#330a00);
+    border:1px solid #ff6b00; color:#ff6b00; padding:6px 14px;
+    cursor:pointer; letter-spacing:2px; border-radius:2px;
+    transition:all .2s; text-shadow:0 0 10px #ff6b00; flex-shrink:0;
+  }
+  #military-btn:hover { background:#ff6b00; color:#000; box-shadow:0 0 20px #ff6b00; }
+  #save-btn, #load-btn {
+    font-family:'Orbitron',monospace; font-size:10px;
+    background:rgba(255,255,255,0.04); border:1px solid var(--border);
+    color:var(--text2); padding:5px 12px; cursor:pointer;
+    letter-spacing:1px; border-radius:2px; transition:all .2s; flex-shrink:0;
+  }
+  #save-btn:hover { border-color:var(--accent3); color:var(--accent3); }
+  #load-btn:hover { border-color:var(--accent4); color:var(--accent4); }
+
+  /* ── IMPROVED TILE ANIMATIONS ── */
+  .tile { transition: background .12s, transform .1s; }
+  .tile:hover { transform: scale(1.08); z-index:10; }
+  .tile.has-building { animation: buildPop .3s ease; }
+  @keyframes buildPop {
+    0%   { transform: scale(0.5); opacity:0; }
+    70%  { transform: scale(1.15); }
+    100% { transform: scale(1);   opacity:1; }
+  }
+  .tile .building-glow { position:absolute; inset:0; border-radius:2px; opacity:0; transition:opacity .2s; }
+  .tile:hover .building-glow { opacity:1; }
+
+  /* ── NOTIFICATION TOAST ── */
+  #toast-container {
+    position:fixed; bottom:40px; right:20px; z-index:2000;
+    display:flex; flex-direction:column; gap:8px; pointer-events:none;
+  }
+  .toast {
+    background:#0d1520; border:1px solid var(--accent);
+    padding:10px 16px; font-family:'Share Tech Mono'; font-size:12px;
+    color:var(--accent); border-radius:2px; min-width:240px;
+    animation: toastIn .3s ease, toastOut .3s ease 2.7s forwards;
+    box-shadow: 0 0 20px rgba(0,200,255,0.15);
+    pointer-events:none;
+  }
+  .toast.warn  { border-color:var(--accent4); color:var(--accent4); }
+  .toast.danger{ border-color:var(--danger);  color:var(--danger);  }
+  .toast.good  { border-color:var(--accent3); color:var(--accent3); }
+  @keyframes toastIn  { from { opacity:0; transform:translateX(30px); } to { opacity:1; transform:translateX(0); } }
+  @keyframes toastOut { from { opacity:1; } to { opacity:0; transform:translateX(30px); } }
+
+  /* ── PARTICLE CANVAS ── */
+  #particle-canvas { position:fixed; inset:0; pointer-events:none; z-index:1; }
+
+  /* ── MILITARY SCREEN ── */
+  #military-screen {
+    position:fixed; inset:0; background:rgba(0,0,0,0.92);
+    z-index:600; display:none; flex-direction:column;
+    font-family:'Rajdhani',sans-serif;
+  }
+  #military-screen.open { display:flex; }
+
+  #mil-header {
+    background:linear-gradient(90deg,#000,#100500,#100500,#000);
+    border-bottom:1px solid #ff6b00; padding:10px 24px;
+    display:flex; align-items:center; gap:20px; flex-shrink:0; position:relative;
+  }
+  #mil-header::after { content:''; position:absolute; bottom:0; left:0; right:0; height:1px;
+    background:linear-gradient(90deg,transparent,#ff6b00,transparent); }
+  .mil-logo { font-family:'Orbitron'; font-size:16px; font-weight:900;
+    color:#ff6b00; letter-spacing:4px; text-shadow:0 0 20px #ff6b00; }
+  #mil-close { font-family:'Orbitron'; font-size:10px; background:transparent;
+    border:1px solid var(--danger); color:var(--danger); padding:6px 14px;
+    cursor:pointer; letter-spacing:2px; transition:all .2s; }
+  #mil-close:hover { background:var(--danger); color:#fff; }
+
+  #mil-body { display:flex; flex:1; overflow:hidden; }
+  #mil-tabs { width:160px; background:#080400; border-right:1px solid var(--border);
+    display:flex; flex-direction:column; padding:12px 0; gap:2px; flex-shrink:0; }
+  .mil-tab { padding:10px 16px; font-size:12px; font-weight:600; cursor:pointer;
+    color:var(--text2); border-left:2px solid transparent; transition:all .15s;
+    display:flex; align-items:center; gap:8px; }
+  .mil-tab:hover { color:#ff6b00; background:rgba(255,107,0,0.06); }
+  .mil-tab.active { color:#ff6b00; border-left-color:#ff6b00; background:rgba(255,107,0,0.1); }
+  #mil-content { flex:1; overflow-y:auto; padding:20px 24px; }
+  #mil-sidebar { width:220px; background:#080400; border-left:1px solid var(--border);
+    padding:16px 14px; overflow-y:auto; flex-shrink:0; }
+
+  .mil-section-title { font-family:'Orbitron'; font-size:9px; letter-spacing:3px;
+    color:#ff6b00; margin-bottom:14px; padding-bottom:6px;
+    border-bottom:1px solid rgba(255,107,0,0.25); }
+
+  /* Units grid */
+  .units-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:10px; margin-bottom:20px; }
+  .unit-card { background:#0d0800; border:1px solid var(--border); padding:14px;
+    border-radius:2px; transition:border-color .2s; }
+  .unit-card:hover { border-color:#ff6b00; }
+  .unit-icon { font-size:32px; margin-bottom:8px; }
+  .unit-name { font-size:13px; font-weight:700; margin-bottom:2px; }
+  .unit-type { font-size:10px; color:#ff6b00; font-family:'Share Tech Mono'; letter-spacing:1px; margin-bottom:8px; }
+  .unit-stats { font-size:11px; color:var(--text2); font-family:'Share Tech Mono'; margin-bottom:8px; }
+  .unit-count { font-size:20px; font-family:'Share Tech Mono'; color:#ff6b00; margin-bottom:8px; }
+  .unit-btn { width:100%; padding:6px; font-family:'Orbitron'; font-size:9px; letter-spacing:1px;
+    cursor:pointer; border-radius:1px; transition:all .15s;
+    background:rgba(255,107,0,0.1); border:1px solid #ff6b00; color:#ff6b00; }
+  .unit-btn:hover { background:#ff6b00; color:#000; }
+  .unit-btn:disabled { opacity:.3; cursor:not-allowed; }
+
+  /* War screen */
+  .nation-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:20px; }
+  .enemy-card { background:#0d0800; border:1px solid var(--border); padding:14px;
+    border-radius:2px; transition:border-color .2s; text-align:center; }
+  .enemy-card:hover { border-color:var(--danger); }
+  .enemy-flag { font-size:36px; margin-bottom:8px; }
+  .enemy-name { font-size:14px; font-weight:700; margin-bottom:4px; }
+  .enemy-strength { font-family:'Share Tech Mono'; font-size:11px; margin-bottom:8px; }
+  .enemy-reward { font-size:11px; color:var(--accent3); font-family:'Share Tech Mono'; margin-bottom:10px; }
+  .war-btn { width:100%; padding:7px; font-family:'Orbitron'; font-size:9px; letter-spacing:1px;
+    cursor:pointer; border-radius:1px; transition:all .15s;
+    background:rgba(255,51,102,0.12); border:1px solid var(--danger); color:var(--danger); }
+  .war-btn:hover { background:var(--danger); color:#fff; }
+
+  /* Battle animation */
+  #battle-arena { background:#050200; border:2px solid #ff6b00; padding:20px; border-radius:4px;
+    text-align:center; margin-bottom:20px; display:none; }
+  .battle-title { font-family:'Orbitron'; font-size:16px; color:#ff6b00; letter-spacing:3px; margin-bottom:16px; }
+  .battle-vs { display:flex; justify-content:center; align-items:center; gap:30px; margin-bottom:16px; }
+  .battle-side { text-align:center; }
+  .battle-flag { font-size:48px; }
+  .battle-hp { font-family:'Share Tech Mono'; font-size:13px; margin-top:8px; }
+  .battle-hp-bar { height:8px; border-radius:4px; margin-top:4px; transition:width .5s; }
+  .vs-text { font-family:'Orbitron'; font-size:24px; color:var(--danger); animation:pulse 1s infinite; }
+  .battle-log-box { background:#000; border:1px solid var(--border); padding:10px;
+    font-family:'Share Tech Mono'; font-size:11px; max-height:120px; overflow-y:auto;
+    text-align:left; border-radius:2px; }
+
+  /* Defence tab */
+  .defence-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .defence-card { background:#0d0800; border:1px solid var(--border); padding:14px; border-radius:2px; }
+  .def-name { font-size:14px; font-weight:700; margin-bottom:4px; }
+  .def-desc { font-size:11px; color:var(--text2); margin-bottom:10px; line-height:1.5; }
+  .def-btn { width:100%; padding:6px; font-family:'Orbitron'; font-size:9px; letter-spacing:1px;
+    cursor:pointer; border-radius:1px; background:rgba(255,107,0,0.1);
+    border:1px solid #ff6b00; color:#ff6b00; transition:all .15s; }
+  .def-btn:hover { background:#ff6b00; color:#000; }
+
+  /* Mil sidebar */
+  .ms-row { display:flex; justify-content:space-between; padding:4px 0;
+    font-size:12px; border-bottom:1px solid #0d1a22; }
+  .ms-key { color:var(--text2); }
+  .ms-val { font-family:'Share Tech Mono'; font-size:11px; color:#ff6b00; }
+
+  /* ── SAVE/LOAD NOTIFICATION ── */
+  .save-flash {
+    position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+    background:#0d1520; border:2px solid var(--accent3);
+    padding:20px 40px; font-family:'Orbitron'; font-size:18px;
+    color:var(--accent3); letter-spacing:4px; z-index:3000;
+    animation:saveFlash .8s ease forwards;
+    box-shadow:0 0 40px rgba(0,255,136,0.3);
+  }
+  @keyframes saveFlash {
+    0%   { opacity:0; transform:translate(-50%,-50%) scale(.8); }
+    30%  { opacity:1; transform:translate(-50%,-50%) scale(1.05); }
+    70%  { opacity:1; }
+    100% { opacity:0; transform:translate(-50%,-50%) scale(1); }
+  }
+
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: #050810; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div id="header">
+  <div class="logo">SOVER<span>EIGN</span></div>
+  <div class="stat-bar" id="stat-bar"></div>
+  <button id="trade-btn" onclick="openTrade()">🌍 TRADE</button>
+  <button id="politics-btn" onclick="openPolitics()">🏛 POLITICS</button>
+  <button id="military-btn" onclick="openMilitary()">⚔️ MILITARY</button>
+  <button id="save-btn" onclick="saveGame()">💾 SAVE</button>
+  <button id="load-btn" onclick="loadGame()">📂 LOAD</button>
+  <button id="turn-btn" onclick="nextTurn()">⏭ NEXT YEAR</button>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+  <!-- LEFT: BUILD PANEL -->
+  <div id="left-panel">
+    <div class="panel-title">◈ BUILD MODE</div>
+
+    <div class="build-category">
+      <div class="cat-title">⚡ Energy</div>
+      <button class="build-btn" onclick="selectBuild('coal_plant')" id="btn-coal_plant">
+        <span class="bicon">🏭</span> Coal Plant <span class="bcost">₹800</span>
+      </button>
+      <button class="build-btn" onclick="selectBuild('solar_farm')" id="btn-solar_farm">
+        <span class="bicon">☀️</span> Solar Farm <span class="bcost">₹1200</span>
+      </button>
+      <button class="build-btn" onclick="selectBuild('gas_plant')" id="btn-gas_plant">
+        <span class="bicon">🔥</span> Gas Plant <span class="bcost">₹1000</span>
+      </button>
+    </div>
+
+    <div class="build-category">
+      <div class="cat-title">🏘 Zones</div>
+      <button class="build-btn" onclick="selectBuild('residential')" id="btn-residential">
+        <span class="bicon">🏠</span> Residential <span class="bcost">₹400</span>
+      </button>
+      <button class="build-btn" onclick="selectBuild('commercial')" id="btn-commercial">
+        <span class="bicon">🏬</span> Commercial <span class="bcost">₹600</span>
+      </button>
+      <button class="build-btn" onclick="selectBuild('industrial')" id="btn-industrial">
+        <span class="bicon">🏗️</span> Industrial <span class="bcost">₹700</span>
+      </button>
+      <button class="build-btn" onclick="selectBuild('farm')" id="btn-farm">
+        <span class="bicon">🌾</span> Farm <span class="bcost">₹300</span>
+      </button>
+    </div>
+
+    <div class="build-category">
+      <div class="cat-title">🛣 Transport</div>
+      <button class="build-btn" onclick="selectBuild('road')" id="btn-road">
+        <span class="bicon">🛤️</span> Road <span class="bcost">₹100</span>
+      </button>
+      <button class="build-btn" onclick="selectBuild('railway')" id="btn-railway">
+        <span class="bicon">🚂</span> Railway <span class="bcost">₹500</span>
+      </button>
+      <button class="build-btn" onclick="selectBuild('port')" id="btn-port">
+        <span class="bicon">🚢</span> Sea Port <span class="bcost">₹1500</span>
+      </button>
+    </div>
+
+    <div class="build-category">
+      <div class="cat-title">⛏ Resources</div>
+      <button class="build-btn" onclick="selectBuild('coal_mine')" id="btn-coal_mine">
+        <span class="bicon">⛏️</span> Coal Mine <span class="bcost">₹600</span>
+      </button>
+      <button class="build-btn" onclick="selectBuild('oil_rig')" id="btn-oil_rig">
+        <span class="bicon">🛢️</span> Oil Rig <span class="bcost">₹900</span>
+      </button>
+      <button class="build-btn" onclick="selectBuild('iron_mine')" id="btn-iron_mine">
+        <span class="bicon">🔩</span> Iron Mine <span class="bcost">₹700</span>
+      </button>
+    </div>
+
+    <div class="build-category">
+      <div class="cat-title">🏛 Government</div>
+      <button class="build-btn" onclick="selectBuild('hospital')" id="btn-hospital">
+        <span class="bicon">🏥</span> Hospital <span class="bcost">₹800</span>
+      </button>
+      <button class="build-btn" onclick="selectBuild('school')" id="btn-school">
+        <span class="bicon">🏫</span> School <span class="bcost">₹500</span>
+      </button>
+      <button class="build-btn" onclick="selectBuild('market')" id="btn-market">
+        <span class="bicon">🏪</span> Market <span class="bcost">₹400</span>
+      </button>
+      <button class="build-btn" onclick="selectBuild('police')" id="btn-police">
+        <span class="bicon">🚔</span> Police <span class="bcost">₹350</span>
+      </button>
+    </div>
+
+    <div style="padding:8px 12px; margin-top:auto;">
+      <button class="build-btn" onclick="selectBuild(null)" style="color:var(--danger)">
+        <span class="bicon">❌</span> Cancel Build
+      </button>
+      <button class="build-btn" onclick="toggleDemolish()" id="btn-demolish" style="color:var(--accent2)">
+        <span class="bicon">💥</span> Demolish
+      </button>
+    </div>
+  </div>
+
+  <!-- MAP -->
+  <div id="map-wrap">
+    <canvas id="map-canvas"></canvas>
+    <div id="map"></div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div id="right-panel">
+    <div class="info-section">
+      <div class="info-title">◈ NATION STATS</div>
+      <div id="nation-stats"></div>
+    </div>
+    <div class="info-section">
+      <div class="info-title">◈ ECONOMY</div>
+      <div id="economy-stats"></div>
+    </div>
+    <div class="info-section">
+      <div class="info-title">◈ RESOURCES</div>
+      <div id="resource-stats"></div>
+    </div>
+    <div class="panel-title" style="border-top:1px solid var(--border)">◈ EVENTS & DECISIONS</div>
+    <div id="events-panel"></div>
+  </div>
+</div>
+
+<!-- BOTTOM -->
+<div id="bottom-bar">
+  <span>GRID: <span id="coord-display">--,--</span></span>
+  <span id="build-mode-display">MODE: INSPECT</span>
+  <span id="status-msg">Welcome to SOVEREIGN. Build your nation.</span>
+  <span class="year-display">YEAR: <span id="year-display">2025</span></span>
+</div>
+
+<!-- TOOLTIP -->
+<div id="tooltip">
+  <div class="tt-name" id="tt-name"></div>
+  <div id="tt-body"></div>
+</div>
+
+<!-- TRADE SCREEN -->
+<div id="trade-screen">
+  <div id="trade-header">
+    <div class="trade-logo">🌍 GLOBAL TRADE CENTER</div>
+    <div style="font-family:'Share Tech Mono';font-size:11px;color:var(--text2)">YEAR: <span id="trade-year">2025</span></div>
+    <div class="trade-budget-display">BUDGET: ₹<span id="trade-budget">5000</span></div>
+    <button id="trade-close" onclick="closeTrade()">✕ CLOSE</button>
+  </div>
+  <div id="trade-body">
+    <!-- Tabs -->
+    <div id="trade-tabs">
+      <div class="trade-tab active" onclick="switchTab('market')" id="tab-market">📊 Market</div>
+      <div class="trade-tab" onclick="switchTab('partners')" id="tab-partners">🤝 Partners</div>
+      <div class="trade-tab" onclick="switchTab('routes')" id="tab-routes">🚢 Routes</div>
+      <div class="trade-tab" onclick="switchTab('policy')" id="tab-policy">📜 Policy</div>
+      <div class="trade-tab" onclick="switchTab('log')" id="tab-log">📋 Trade Log</div>
+    </div>
+    <!-- Content -->
+    <div id="trade-content"></div>
+    <!-- Sidebar -->
+    <div id="trade-sidebar">
+      <div class="ts-title">◈ TRADE SUMMARY</div>
+      <div class="ts-row"><span class="ts-key">Exports/yr</span><span class="ts-val" style="color:var(--accent3)" id="ts-exports">₹0</span></div>
+      <div class="ts-row"><span class="ts-key">Imports/yr</span><span class="ts-val" style="color:var(--accent)" id="ts-imports">₹0</span></div>
+      <div class="ts-row"><span class="ts-key">Trade Balance</span><span class="ts-val" id="ts-balance">₹0</span></div>
+      <div class="ts-row"><span class="ts-key">Partners</span><span class="ts-val" id="ts-partners">0</span></div>
+      <div class="ts-row"><span class="ts-key">Active Routes</span><span class="ts-val" id="ts-routes">0</span></div>
+      <div class="ts-row"><span class="ts-key">Trade Rank</span><span class="ts-val" id="ts-rank">#12</span></div>
+
+      <div class="ts-title" style="margin-top:16px">◈ RESOURCES</div>
+      <div class="ts-row"><span class="ts-key">⛏ Coal</span><span class="ts-val" id="ts-coal">0 T</span></div>
+      <div class="ts-row"><span class="ts-key">🛢 Oil</span><span class="ts-val" id="ts-oil">0 kL</span></div>
+      <div class="ts-row"><span class="ts-key">🔩 Iron</span><span class="ts-val" id="ts-iron">0 T</span></div>
+      <div class="ts-row"><span class="ts-key">🌾 Food</span><span class="ts-val" id="ts-food">0%</span></div>
+
+      <div class="ts-title" style="margin-top:16px">◈ EXPORT TREND</div>
+      <div class="sparkline" id="sparkline"></div>
+      <div style="font-size:9px;color:var(--text2);font-family:'Share Tech Mono'">Last 8 years</div>
+    </div>
+  </div>
+</div>
+
+<!-- POLITICS SCREEN -->
+<div id="politics-screen">
+  <div id="pol-header">
+    <div class="pol-logo">🏛 POLITICAL COMMAND</div>
+    <div style="font-family:'Share Tech Mono';font-size:11px;color:var(--text2)">TERM: <span id="pol-term">1</span> &nbsp;|&nbsp; YEAR: <span id="pol-year">2025</span></div>
+    <div style="font-family:'Share Tech Mono';font-size:11px;color:var(--text2)">NEXT ELECTION: <span id="pol-election-in" style="color:#b060ff">4 yrs</span></div>
+    <div class="pol-approval-big">
+      <div class="pol-approval-num" id="pol-approval-num" style="color:#b060ff">50%</div>
+      <div class="pol-approval-label">APPROVAL RATING</div>
+    </div>
+    <button id="pol-close" onclick="closePolitics()">✕ CLOSE</button>
+  </div>
+  <div id="pol-body">
+    <div id="pol-tabs">
+      <div class="pol-tab active" onclick="switchPolTab('cabinet')" id="ptab-cabinet">👔 Cabinet</div>
+      <div class="pol-tab" onclick="switchPolTab('parliament')" id="ptab-parliament">🏛 Parliament</div>
+      <div class="pol-tab" onclick="switchPolTab('bills')" id="ptab-bills">📜 Bills</div>
+      <div class="pol-tab" onclick="switchPolTab('election')" id="ptab-election">🗳 Election</div>
+      <div class="pol-tab" onclick="switchPolTab('scandals')" id="ptab-scandals">🔍 Scandals</div>
+    </div>
+    <div id="pol-content"></div>
+    <div id="pol-sidebar">
+      <div class="pol-section-title">◈ YOUR POWER</div>
+      <div class="ps-row"><span class="ps-key">Approval</span><span class="ps-val" id="ps-approval">50%</span></div>
+      <div class="ps-row"><span class="ps-key">Parliament Seats</span><span class="ps-val" id="ps-seats">-</span></div>
+      <div class="ps-row"><span class="ps-key">Coalition</span><span class="ps-val" id="ps-coalition">-</span></div>
+      <div class="ps-row"><span class="ps-key">Cabinet Size</span><span class="ps-val" id="ps-cabinet">8</span></div>
+      <div class="ps-row"><span class="ps-key">Corruption</span><span class="ps-val" id="ps-corruption" style="color:var(--danger)">Low</span></div>
+      <div class="ps-row"><span class="ps-key">Bills Passed</span><span class="ps-val" id="ps-bills">0</span></div>
+      <div class="ps-row"><span class="ps-key">Term</span><span class="ps-val" id="ps-term">1st</span></div>
+      <div class="ps-row"><span class="ps-key">Next Election</span><span class="ps-val" id="ps-election">4 yrs</span></div>
+
+      <div class="pol-section-title" style="margin-top:16px">◈ APPROVAL TREND</div>
+      <div class="approval-meter">
+        <div class="approval-fill" id="pol-app-fill" style="width:50%;background:#b060ff"></div>
+      </div>
+      <div style="font-size:10px;color:var(--text2);font-family:'Share Tech Mono'">
+        <div>😡 &lt;30%: Revolt risk</div>
+        <div>😐 30-60%: Stable</div>
+        <div>😊 &gt;60%: Popular</div>
+        <div style="margin-top:6px;color:#b060ff">⚡ Win election: &gt;50%</div>
+      </div>
+
+      <div class="pol-section-title" style="margin-top:16px">◈ PARTY FUNDS</div>
+      <div class="ps-row"><span class="ps-key">Party Budget</span><span class="ps-val" id="ps-partyfund">₹1000</span></div>
+      <div class="ps-row"><span class="ps-key">Donations/yr</span><span class="ps-val">₹200</span></div>
+      <div style="margin-top:10px">
+        <button onclick="donateToParty()" style="width:100%;padding:6px;font-family:'Orbitron';font-size:9px;letter-spacing:1px;cursor:pointer;background:rgba(176,96,255,0.1);border:1px solid #b060ff;color:#b060ff;border-radius:1px;transition:all .15s" onmouseover="this.style.background='#b060ff';this.style.color='#000'" onmouseout="this.style.background='rgba(176,96,255,0.1)';this.style.color='#b060ff'">
+          DONATE ₹500 TO PARTY
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST NOTIFICATIONS -->
+<div id="toast-container"></div>
+<!-- PARTICLE CANVAS -->
+<canvas id="particle-canvas"></canvas>
+
+<!-- MILITARY SCREEN -->
+<div id="military-screen">
+  <div id="mil-header">
+    <div class="mil-logo">⚔️ MINISTRY OF DEFENCE</div>
+    <div style="font-family:'Share Tech Mono';font-size:11px;color:var(--text2)">YEAR: <span id="mil-year">2025</span></div>
+    <div style="font-family:'Share Tech Mono';font-size:13px;color:#ff6b00;margin-left:auto">
+      ⚔️ POWER: <span id="mil-power-display">0</span>
+    </div>
+    <button id="mil-close" onclick="closeMilitary()">✕ CLOSE</button>
+  </div>
+  <div id="mil-body">
+    <div id="mil-tabs">
+      <div class="mil-tab active" onclick="switchMilTab('units')"    id="mtab-units">🪖 Units</div>
+      <div class="mil-tab" onclick="switchMilTab('war')"      id="mtab-war">🔥 War Room</div>
+      <div class="mil-tab" onclick="switchMilTab('defence')"  id="mtab-defence">🛡 Defence</div>
+      <div class="mil-tab" onclick="switchMilTab('intel')"    id="mtab-intel">🔍 Intel</div>
+      <div class="mil-tab" onclick="switchMilTab('millog')"   id="mtab-millog">📋 War Log</div>
+    </div>
+    <div id="mil-content"></div>
+    <div id="mil-sidebar">
+      <div class="mil-section-title">◈ ARMED FORCES</div>
+      <div class="ms-row"><span class="ms-key">Army</span><span class="ms-val" id="ms-army">0</span></div>
+      <div class="ms-row"><span class="ms-key">Navy</span><span class="ms-val" id="ms-navy">0</span></div>
+      <div class="ms-row"><span class="ms-key">Air Force</span><span class="ms-val" id="ms-air">0</span></div>
+      <div class="ms-row"><span class="ms-key">Nuclear</span><span class="ms-val" id="ms-nuke">None</span></div>
+      <div class="ms-row"><span class="ms-key">Military Power</span><span class="ms-val" id="ms-power">0</span></div>
+      <div class="ms-row"><span class="ms-key">Defence Budget</span><span class="ms-val" id="ms-budget">₹0/yr</span></div>
+      <div class="ms-row"><span class="ms-key">Wars Won</span><span class="ms-val" id="ms-wars">0</span></div>
+      <div class="ms-row"><span class="ms-key">At War</span><span class="ms-val" id="ms-atwar" style="color:var(--danger)">No</span></div>
+
+      <div class="mil-section-title" style="margin-top:16px">◈ GLOBAL THREAT</div>
+      <div id="threat-meter" style="height:8px;background:#1a0800;border-radius:4px;overflow:hidden;margin-bottom:8px">
+        <div id="threat-fill" style="height:100%;background:#ff6b00;width:20%;border-radius:4px;transition:width .5s"></div>
+      </div>
+      <div style="font-size:10px;color:var(--text2);font-family:'Share Tech Mono'" id="threat-label">LOW THREAT</div>
+
+      <div class="mil-section-title" style="margin-top:14px">◈ QUICK RECRUIT</div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <button onclick="quickRecruit('infantry')" style="padding:6px;font-family:'Orbitron';font-size:9px;cursor:pointer;background:rgba(255,107,0,0.1);border:1px solid #ff6b00;color:#ff6b00;border-radius:1px;transition:all .15s;letter-spacing:1px" onmouseover="this.style.background='#ff6b00';this.style.color='#000'" onmouseout="this.style.background='rgba(255,107,0,0.1)';this.style.color='#ff6b00'">+1000 INFANTRY ₹200</button>
+        <button onclick="quickRecruit('tank')" style="padding:6px;font-family:'Orbitron';font-size:9px;cursor:pointer;background:rgba(255,107,0,0.1);border:1px solid #ff6b00;color:#ff6b00;border-radius:1px;transition:all .15s;letter-spacing:1px" onmouseover="this.style.background='#ff6b00';this.style.color='#000'" onmouseout="this.style.background='rgba(255,107,0,0.1)';this.style.color='#ff6b00'">+10 TANKS ₹500</button>
+        <button onclick="quickRecruit('jet')" style="padding:6px;font-family:'Orbitron';font-size:9px;cursor:pointer;background:rgba(255,107,0,0.1);border:1px solid #ff6b00;color:#ff6b00;border-radius:1px;transition:all .15s;letter-spacing:1px" onmouseover="this.style.background='#ff6b00';this.style.color='#000'" onmouseout="this.style.background='rgba(255,107,0,0.1)';this.style.color='#ff6b00'">+5 JETS ₹800</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div id="modal">
+  <div id="modal-box">
+    <h2 id="modal-title"></h2>
+    <p id="modal-desc"></p>
+    <div class="modal-btns" id="modal-btns"></div>
+  </div>
+</div>
+
+<script>
+// ─── CONSTANTS ───────────────────────────────────────────────────────────────
+const COLS = 24, ROWS = 18;
+const TILE = 52;
+
+const BUILDINGS = {
+  coal_plant:  { name:'Coal Plant', icon:'🏭', cost:800,  energy:+80,  pollution:+30, jobs:40,  maintenance:40  },
+  solar_farm:  { name:'Solar Farm',  icon:'☀️', cost:1200, energy:+50,  pollution:-5,  jobs:15,  maintenance:20  },
+  gas_plant:   { name:'Gas Plant',   icon:'🔥', cost:1000, energy:+60,  pollution:+15, jobs:25,  maintenance:30  },
+  residential: { name:'Residential', icon:'🏠', cost:400,  population:+500, happiness:+5,  tax:+20,  maintenance:15 },
+  commercial:  { name:'Commercial',  icon:'🏬', cost:600,  gdp:+80,    jobs:60,  tax:+40,  maintenance:20  },
+  industrial:  { name:'Industrial',  icon:'🏗️', cost:700,  gdp:+120,   jobs:100, pollution:+20, maintenance:30, tax:+30 },
+  farm:        { name:'Farm',        icon:'🌾', cost:300,  food:+60,   jobs:30,  happiness:+2, maintenance:10  },
+  road:        { name:'Road',        icon:'🛤️', cost:100,  connectivity:+5, maintenance:5  },
+  railway:     { name:'Railway',     icon:'🚂', cost:500,  gdp:+40,    connectivity:+15, maintenance:25 },
+  port:        { name:'Sea Port',    icon:'🚢', cost:1500, gdp:+200,   trade:+100, maintenance:60, jobs:80 },
+  coal_mine:   { name:'Coal Mine',   icon:'⛏️', cost:600,  coal:+80,   jobs:50,  pollution:+10, maintenance:20 },
+  oil_rig:     { name:'Oil Rig',     icon:'🛢️', cost:900,  oil:+60,    gdp:+80,  jobs:40,  maintenance:35  },
+  iron_mine:   { name:'Iron Mine',   icon:'🔩', cost:700,  iron:+70,   jobs:45,  maintenance:25  },
+  hospital:    { name:'Hospital',    icon:'🏥', cost:800,  health:+20, happiness:+8, maintenance:50  },
+  school:      { name:'School',      icon:'🏫', cost:500,  education:+20, happiness:+6, maintenance:30  },
+  market:      { name:'Market',      icon:'🏪', cost:400,  gdp:+50,    happiness:+4, tax:+25, maintenance:15 },
+  police:      { name:'Police Stn',  icon:'🚔', cost:350,  crime:-20,  happiness:+3, maintenance:20  },
+};
+
+// ─── GAME STATE ──────────────────────────────────────────────────────────────
+let state = {
+  year: 2025,
+  budget: 5000,
+  population: 10000,
+  happiness: 50,
+  gdp: 500,
+  energy: 100,
+  pollution: 10,
+  health: 50,
+  education: 40,
+  food: 60,
+  coal: 0, oil: 0, iron: 0,
+  trade: 0,
+  crime: 30,
+  jobs: 5000,
+  maintenance: 0,
+  tax_income: 200,
+  connectivity: 20,
+  buildings: [],
+  grid: {},       // key: "r,c" → { type, level }
+  selectedBuild: null,
+  demolish: false,
+  turn: 0,
+};
+
+// ─── GRID SETUP ──────────────────────────────────────────────────────────────
+function initMap() {
+  const map = document.getElementById('map');
+  map.style.gridTemplateColumns = `repeat(${COLS}, ${TILE}px)`;
+  map.style.gridTemplateRows    = `repeat(${ROWS}, ${TILE}px)`;
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      const tile = document.createElement('div');
+      tile.className = 'tile';
+      tile.id = `t-${r}-${c}`;
+      tile.dataset.r = r; tile.dataset.c = c;
+      tile.addEventListener('click', () => onTileClick(r, c));
+      tile.addEventListener('mousemove', e => onTileHover(e, r, c));
+      tile.addEventListener('mouseleave', hideTooltip);
+      map.appendChild(tile);
+    }
+  }
+}
+
+function renderTile(r, c) {
+  const tile = document.getElementById(`t-${r}-${c}`);
+  if (!tile) return;
+  const key = `${r},${c}`;
+  const bld = state.grid[key];
+  if (bld) {
+    const def = BUILDINGS[bld.type];
+    tile.innerHTML = `<span>${def.icon}</span><span class="tlvl">L${bld.level}</span>`;
+    tile.classList.add('has-building');
+    if (bld.type === 'road' || bld.type === 'railway') tile.classList.add('road');
+    else tile.classList.remove('road');
+  } else {
+    tile.innerHTML = '';
+    tile.classList.remove('has-building', 'road');
+  }
+}
+
+// ─── BUILD / DEMOLISH ────────────────────────────────────────────────────────
+function selectBuild(type) {
+  state.selectedBuild = type;
+  state.demolish = false;
+  document.querySelectorAll('.build-btn').forEach(b => b.classList.remove('active'));
+  if (type) document.getElementById('btn-' + type)?.classList.add('active');
+  const bd = document.getElementById('build-mode-display');
+  bd.textContent = type ? `MODE: BUILD — ${BUILDINGS[type].name}` : 'MODE: INSPECT';
+  document.getElementById('btn-demolish').classList.remove('active');
+}
+
+function toggleDemolish() {
+  state.demolish = !state.demolish;
+  state.selectedBuild = null;
+  document.querySelectorAll('.build-btn').forEach(b => b.classList.remove('active'));
+  if (state.demolish) document.getElementById('btn-demolish').classList.add('active');
+  document.getElementById('build-mode-display').textContent = state.demolish ? 'MODE: DEMOLISH' : 'MODE: INSPECT';
+}
+
+function onTileClick(r, c) {
+  const key = `${r},${c}`;
+  if (state.demolish) {
+    if (state.grid[key]) {
+      delete state.grid[key];
+      renderTile(r, c);
+      setStatus('Building demolished.');
+      recalc();
+    }
+    return;
+  }
+  if (!state.selectedBuild) return;
+  const type = state.selectedBuild;
+  const def = BUILDINGS[type];
+  if (state.grid[key]) {
+    // Upgrade if same type
+    if (state.grid[key].type === type) {
+      if (state.grid[key].level < 5) {
+        const upgCost = Math.floor(def.cost * 0.6);
+        if (state.budget < upgCost) { setStatus('⚠ Not enough budget!'); return; }
+        state.budget -= upgCost;
+        state.grid[key].level++;
+        renderTile(r, c);
+        setStatus(`Upgraded ${def.name} to Level ${state.grid[key].level}!`);
+        recalc();
+      } else setStatus('Already at max level!');
+      return;
+    }
+    setStatus('Tile occupied! Demolish first.');
+    return;
+  }
+  if (state.budget < def.cost) { setStatus('⚠ Not enough budget!'); return; }
+  state.budget -= def.cost;
+  state.grid[key] = { type, level: 1 };
+  renderTile(r, c);
+  setStatus(`Built ${def.name} at (${r},${c})`);
+  recalc();
+}
+
+function onTileHover(e, r, c) {
+  document.getElementById('coord-display').textContent = `${c},${r}`;
+  const key = `${r},${c}`;
+  const bld = state.grid[key];
+  if (!bld) { hideTooltip(); return; }
+  const def = BUILDINGS[bld.type];
+  const tt = document.getElementById('tooltip');
+  document.getElementById('tt-name').textContent = def.icon + ' ' + def.name + ` [Lv${bld.level}]`;
+  const mul = bld.level;
+  let rows = '';
+  const effects = ['energy','population','gdp','food','pollution','jobs','health','education','coal','oil','iron','trade'];
+  effects.forEach(k => {
+    if (def[k] !== undefined) {
+      const v = (def[k] * mul > 0 ? '+' : '') + (def[k] * mul);
+      const color = def[k] < 0 ? '#ff3366' : '#00ff88';
+      rows += `<div class="tt-row"><span>${k}</span><span class="tt-val" style="color:${color}">${v}</span></div>`;
+    }
+  });
+  rows += `<div class="tt-row"><span>maintenance</span><span class="tt-val" style="color:#ffd700">-₹${def.maintenance*mul}</span></div>`;
+  document.getElementById('tt-body').innerHTML = rows;
+  tt.style.display = 'block';
+  tt.style.left = (e.clientX + 12) + 'px';
+  tt.style.top  = (e.clientY - 20) + 'px';
+}
+function hideTooltip() { document.getElementById('tooltip').style.display = 'none'; }
+
+// ─── RECALCULATE STATS ───────────────────────────────────────────────────────
+function recalc() {
+  let energy=0, pollution=0, population=0, gdp=0, food=0,
+      health=0, education=0, coal=0, oil=0, iron=0, trade=0,
+      jobs=0, maintenance=0, tax=0, crime=0, connectivity=0;
+
+  for (const [key, bld] of Object.entries(state.grid)) {
+    const def = BUILDINGS[bld.type];
+    const m = bld.level;
+    if (def.energy)      energy      += def.energy      * m;
+    if (def.pollution)   pollution   += def.pollution   * m;
+    if (def.population)  population  += def.population  * m;
+    if (def.gdp)         gdp         += def.gdp         * m;
+    if (def.food)        food        += def.food        * m;
+    if (def.health)      health      += def.health      * m;
+    if (def.education)   education   += def.education   * m;
+    if (def.coal)        coal        += def.coal        * m;
+    if (def.oil)         oil         += def.oil         * m;
+    if (def.iron)        iron        += def.iron        * m;
+    if (def.trade)       trade       += def.trade       * m;
+    if (def.jobs)        jobs        += def.jobs        * m;
+    if (def.maintenance) maintenance += def.maintenance * m;
+    if (def.tax)         tax         += def.tax         * m;
+    if (def.crime)       crime       += def.crime       * m;
+    if (def.connectivity)connectivity += def.connectivity*m;
+  }
+
+  state.energy       = Math.max(0, energy);
+  state.pollution    = Math.max(0, pollution);
+  state.population   = 10000 + population;
+  state.gdp          = Math.max(100, 500 + gdp);
+  state.food         = Math.max(0, Math.min(100, 60 + food/10));
+  state.health       = Math.max(0, Math.min(100, 50 + health));
+  state.education    = Math.max(0, Math.min(100, 40 + education));
+  state.coal         = Math.max(0, coal);
+  state.oil          = Math.max(0, oil);
+  state.iron         = Math.max(0, iron);
+  state.trade        = trade;
+  state.jobs         = 5000 + jobs;
+  state.maintenance  = maintenance;
+  state.tax_income   = 200 + tax;
+  state.crime        = Math.max(0, 30 + crime);
+  state.connectivity = Math.max(0, 20 + connectivity);
+
+  // Happiness formula
+  let h = 50;
+  h += (state.food - 60) * 0.3;
+  h += (state.health - 50) * 0.3;
+  h += (state.education - 40) * 0.2;
+  h -= state.pollution * 0.4;
+  h -= state.crime * 0.3;
+  h += state.connectivity * 0.1;
+  if (state.energy < 50) h -= 15;
+  state.happiness = Math.max(0, Math.min(100, Math.round(h)));
+
+  renderStats();
+}
+
+// ─── RENDER STATS ────────────────────────────────────────────────────────────
+function renderStats() {
+  // Header stat bar
+  const sb = document.getElementById('stat-bar');
+  const hc = state.happiness >= 60 ? 'good' : state.happiness >= 35 ? 'warn' : 'bad';
+  const ec = state.energy >= 80 ? 'good' : state.energy >= 40 ? 'warn' : 'bad';
+  const income = state.tax_income + Math.floor(state.gdp/10);
+  const balance = income - state.maintenance;
+  const bc = balance >= 0 ? 'good' : 'bad';
+  sb.innerHTML = `
+    <div class="stat"><span class="stat-icon">💰</span><div><div class="stat-label">BUDGET</div><div class="stat-val warn">₹${state.budget.toLocaleString()}</div></div></div>
+    <div class="stat"><span class="stat-icon">👥</span><div><div class="stat-label">POPULATION</div><div class="stat-val">${state.population.toLocaleString()}</div></div></div>
+    <div class="stat"><span class="stat-icon">😊</span><div><div class="stat-label">HAPPINESS</div><div class="stat-val ${hc}">${state.happiness}%</div></div></div>
+    <div class="stat"><span class="stat-icon">⚡</span><div><div class="stat-label">ENERGY</div><div class="stat-val ${ec}">${state.energy} MW</div></div></div>
+    <div class="stat"><span class="stat-icon">📈</span><div><div class="stat-label">GDP</div><div class="stat-val good">₹${state.gdp}B</div></div></div>
+    <div class="stat"><span class="stat-icon">💹</span><div><div class="stat-label">BALANCE</div><div class="stat-val ${bc}">${balance>=0?'+':''}₹${balance}</div></div></div>
+  `;
+
+  // Nation stats
+  document.getElementById('nation-stats').innerHTML = `
+    <div class="info-row"><span class="info-key">Population</span><span class="info-val">${state.population.toLocaleString()}</span></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(100,state.population/1000)}%;background:#00c8ff"></div></div>
+    <div class="info-row"><span class="info-key">Happiness</span><span class="info-val ${state.happiness<35?'bad':state.happiness<60?'warn':''}">${state.happiness}%</span></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:${state.happiness}%;background:${state.happiness<35?'#ff3366':state.happiness<60?'#ffd700':'#00ff88'}"></div></div>
+    <div class="info-row"><span class="info-key">Health</span><span class="info-val">${Math.round(state.health)}%</span></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:${state.health}%;background:#00ff88"></div></div>
+    <div class="info-row"><span class="info-key">Education</span><span class="info-val">${Math.round(state.education)}%</span></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:${state.education}%;background:#00c8ff"></div></div>
+    <div class="info-row"><span class="info-key">Crime Rate</span><span class="info-val ${state.crime>50?'bad':''}">${state.crime}</span></div>
+    <div class="info-row"><span class="info-key">Jobs</span><span class="info-val">${state.jobs.toLocaleString()}</span></div>
+    <div class="info-row"><span class="info-key">Pollution</span><span class="info-val ${state.pollution>60?'bad':state.pollution>30?'warn':''}">${state.pollution} ppm</span></div>
+    <div class="info-row"><span class="info-key">Energy</span><span class="info-val">${state.energy} MW</span></div>
+  `;
+
+  // Economy
+  const income = state.tax_income + Math.floor(state.gdp/10);
+  const balance = income - state.maintenance;
+  document.getElementById('economy-stats').innerHTML = `
+    <div class="info-row"><span class="info-key">Budget</span><span class="info-val warn">₹${state.budget.toLocaleString()}</span></div>
+    <div class="info-row"><span class="info-key">GDP</span><span class="info-val">₹${state.gdp}B</span></div>
+    <div class="info-row"><span class="info-key">Tax Income</span><span class="info-val good">+₹${state.tax_income}/yr</span></div>
+    <div class="info-row"><span class="info-key">Trade</span><span class="info-val good">+₹${state.trade}/yr</span></div>
+    <div class="info-row"><span class="info-key">Maintenance</span><span class="info-val bad">-₹${state.maintenance}/yr</span></div>
+    <div class="info-row"><span class="info-key">Net Balance</span><span class="info-val ${balance>=0?'good':'bad'}">${balance>=0?'+':''}₹${balance}/yr</span></div>
+  `;
+
+  // Resources
+  document.getElementById('resource-stats').innerHTML = `
+    <div class="info-row"><span class="info-key">⛏ Coal</span><span class="info-val">${state.coal} T</span></div>
+    <div class="info-row"><span class="info-key">🛢 Oil</span><span class="info-val">${state.oil} kL</span></div>
+    <div class="info-row"><span class="info-key">🔩 Iron</span><span class="info-val">${state.iron} T</span></div>
+    <div class="info-row"><span class="info-key">🌾 Food Stock</span><span class="info-val">${Math.round(state.food)}%</span></div>
+    <div class="info-row"><span class="info-key">🚢 Trade Vol</span><span class="info-val">₹${state.trade}B</span></div>
+  `;
+
+  document.getElementById('year-display').textContent = state.year;
+}
+
+// ─── TRADE SYSTEM ────────────────────────────────────────────────────────────
+const COUNTRIES = [
+  { id:'china',    name:'China',       flag:'🇨🇳', relation:60, gdp:18000, specialty:'iron',  buys:['coal','oil'],  sells:['iron','food'], sanctioned:false, tradeVol:0 },
+  { id:'usa',      name:'USA',         flag:'🇺🇸', relation:55, gdp:25000, specialty:'tech',  buys:['iron','oil'],  sells:['food'],        sanctioned:false, tradeVol:0 },
+  { id:'saudi',    name:'Saudi Arabia',flag:'🇸🇦', relation:65, gdp:8000,  specialty:'oil',   buys:['food','iron'], sells:['oil'],         sanctioned:false, tradeVol:0 },
+  { id:'germany',  name:'Germany',     flag:'🇩🇪', relation:70, gdp:4500,  specialty:'mfg',   buys:['coal','iron'], sells:['food'],        sanctioned:false, tradeVol:0 },
+  { id:'russia',   name:'Russia',      flag:'🇷🇺', relation:45, gdp:2200,  specialty:'gas',   buys:['food'],        sells:['oil','coal'],  sanctioned:false, tradeVol:0 },
+  { id:'brazil',   name:'Brazil',      flag:'🇧🇷', relation:72, gdp:2100,  specialty:'agri',  buys:['iron','coal'], sells:['food'],        sanctioned:false, tradeVol:0 },
+  { id:'japan',    name:'Japan',       flag:'🇯🇵', relation:68, gdp:4800,  specialty:'tech',  buys:['coal','iron'], sells:['food'],        sanctioned:false, tradeVol:0 },
+  { id:'pakistan', name:'Pakistan',    flag:'🇵🇰', relation:50, gdp:380,   specialty:'agri',  buys:['iron'],        sells:['food'],        sanctioned:false, tradeVol:0 },
+];
+
+const COMMODITIES = [
+  { id:'coal', name:'Coal',       icon:'⛏️', basePrice:12, unit:'T',  stateKey:'coal',  volatility:0.15 },
+  { id:'oil',  name:'Crude Oil',  icon:'🛢️', basePrice:80, unit:'kL', stateKey:'oil',   volatility:0.25 },
+  { id:'iron', name:'Iron Ore',   icon:'🔩', basePrice:18, unit:'T',  stateKey:'iron',  volatility:0.12 },
+  { id:'food', name:'Food Grain', icon:'🌾', basePrice:8,  unit:'T',  stateKey:'food',  volatility:0.10 },
+];
+
+const TRADE_POLICIES = [
+  { id:'free_trade',   name:'Free Trade Zone',      desc:'Removes tariffs. Boosts imports/exports but reduces domestic protection.',  effect:'+Trade ×1.3, -Tax 5%',  active:false, tradeBonus:1.3,  taxMalus:-0.05 },
+  { id:'protectionism',name:'Protectionism',         desc:'High tariffs on imports. Protects local industry but limits trade.',        effect:'+Tax 8%, -Trade ×0.8',   active:false, tradeBonus:0.8,  taxBonus:0.08  },
+  { id:'export_subsidy',name:'Export Subsidy',       desc:'Government subsidises exporters. Increases export volume.',                 effect:'+Exports ×1.2, -₹200/yr', active:false, exportBonus:1.2, costPerYear:200},
+  { id:'mssp',          name:'MSP for Farmers',      desc:'Minimum Support Price guarantees income for farmers. Boosts food output.',  effect:'+Food 20%, +Happiness 5', active:false, foodBonus:20, happinessBonus:5},
+  { id:'strategic_res', name:'Strategic Reserves',   desc:'Stockpile critical resources. Better crisis resilience.',                   effect:'+All Resources 10%',       active:false, resBonus:0.1 },
+  { id:'fdi',           name:'FDI Open Policy',      desc:'Welcome foreign direct investment. Boosts GDP growth.',                     effect:'+GDP 10%, +Trade',         active:false, gdpBonus:0.1  },
+];
+
+let tradeState = {
+  currentTab: 'market',
+  activeCountry: null,
+  tradeLog: [],
+  exportHistory: [0,0,0,0,0,0,0,0],
+  totalExports: 0,
+  totalImports: 0,
+  activeRoutes: [],
+  prices: {},    // commodity id → current price
+  priceHistory: {}, // commodity id → last price (for trend)
+  policies: {},  // policy id → active bool
+};
+
+// Init prices
+function initTradeState() {
+  COMMODITIES.forEach(c => {
+    tradeState.prices[c.id] = c.basePrice;
+    tradeState.priceHistory[c.id] = c.basePrice;
+  });
+  TRADE_POLICIES.forEach(p => { tradeState.policies[p.id] = false; });
+}
+
+// Fluctuate prices each year
+function fluctuatePrices() {
+  COMMODITIES.forEach(c => {
+    tradeState.priceHistory[c.id] = tradeState.prices[c.id];
+    const change = 1 + (Math.random() * 2 - 1) * c.volatility;
+    tradeState.prices[c.id] = Math.max(1, Math.round(c.basePrice * change * 10) / 10);
+  });
+}
+
+function openTrade() {
+  document.getElementById('trade-screen').classList.add('open');
+  updateTradeSidebar();
+  switchTab(tradeState.currentTab);
+}
+function closeTrade() {
+  document.getElementById('trade-screen').classList.remove('open');
+}
+
+function switchTab(tab) {
+  tradeState.currentTab = tab;
+  document.querySelectorAll('.trade-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + tab)?.classList.add('active');
+  const content = document.getElementById('trade-content');
+  if (tab === 'market')   content.innerHTML = renderMarket();
+  if (tab === 'partners') content.innerHTML = renderPartners();
+  if (tab === 'routes')   content.innerHTML = renderRoutes();
+  if (tab === 'policy')   content.innerHTML = renderPolicy();
+  if (tab === 'log')      content.innerHTML = renderTradeLog();
+}
+
+// ── MARKET TAB ──
+function renderMarket() {
+  let html = `<div class="trade-section-title">◈ GLOBAL COMMODITY MARKET — YEAR ${state.year}</div>`;
+  html += `<div class="market-grid">`;
+  COMMODITIES.forEach(c => {
+    const price = tradeState.prices[c.id];
+    const prevPrice = tradeState.priceHistory[c.id];
+    const trend = price > prevPrice ? `▲ +${(price-prevPrice).toFixed(1)}` : price < prevPrice ? `▼ ${(price-prevPrice).toFixed(1)}` : '● stable';
+    const tClass = price > prevPrice ? 'up' : price < prevPrice ? 'down' : '';
+    const stock = c.id === 'food' ? Math.round(state.food) + '%' : (state[c.stateKey] || 0) + ' ' + c.unit;
+    const canSell = c.id === 'food' ? state.food > 20 : (state[c.stateKey] || 0) >= 10;
+    html += `
+    <div class="commodity-card">
+      <div class="com-header">
+        <span class="com-icon">${c.icon}</span>
+        <div>
+          <div class="com-name">${c.name}</div>
+          <div class="com-stock">Stock: ${stock}</div>
+        </div>
+      </div>
+      <div class="com-price">₹${price}<span style="font-size:12px;color:var(--text2)">/${c.unit}</span></div>
+      <div class="com-trend ${tClass}">${trend}</div>
+      <div class="com-actions">
+        <button class="trade-action-btn buy" onclick="tradeAction('import','${c.id}')" ${state.budget<price*10?'disabled':''}>
+          IMPORT
+        </button>
+        <button class="trade-action-btn sell" onclick="tradeAction('export','${c.id}')" ${!canSell?'disabled':''}>
+          EXPORT
+        </button>
+      </div>
+    </div>`;
+  });
+  html += `</div>`;
+  html += `<div class="trade-section-title" style="margin-top:8px">◈ MARKET INTELLIGENCE</div>`;
+  html += `<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">`;
+  const tips = [
+    { icon:'💡', text:'Oil prices are high this year — good time to export if you have reserves.' },
+    { icon:'⚠️', text:'Global food shortage risk. Consider stockpiling food grain.' },
+    { icon:'📈', text:'Iron demand rising due to construction boom in partner nations.' },
+    { icon:'🔮', text:'Coal prices may drop next year due to green energy shift.' },
+  ];
+  tips.forEach(t => {
+    html += `<div style="background:#0a1518;border:1px solid var(--border);padding:12px;border-radius:2px;font-size:12px">
+      <span style="font-size:18px">${t.icon}</span> <span style="color:var(--text2)">${t.text}</span>
+    </div>`;
+  });
+  html += `</div>`;
+  return html;
+}
+
+function tradeAction(type, commodityId) {
+  const c = COMMODITIES.find(x => x.id === commodityId);
+  const price = tradeState.prices[commodityId];
+  const qty = 10;
+  const total = Math.round(price * qty);
+
+  if (type === 'import') {
+    if (state.budget < total) { setStatus('⚠ Not enough budget for import!'); return; }
+    state.budget -= total;
+    if (commodityId === 'food') state.food = Math.min(100, state.food + 10);
+    else state[c.stateKey] = (state[c.stateKey] || 0) + qty;
+    tradeState.totalImports += total;
+    addTradeLog('import', `Imported ${qty} ${c.unit} of ${c.name} from global market`, total);
+    setStatus(`Imported ${c.name}: -₹${total}`);
+  } else {
+    const has = commodityId === 'food' ? state.food : (state[c.stateKey] || 0);
+    if (commodityId === 'food' && state.food < 20) { setStatus('⚠ Food too low to export!'); return; }
+    if (commodityId !== 'food' && has < 10) { setStatus(`⚠ Not enough ${c.name} to export!`); return; }
+    state.budget += total;
+    if (commodityId === 'food') state.food = Math.max(0, state.food - 10);
+    else state[c.stateKey] = Math.max(0, (state[c.stateKey] || 0) - qty);
+    tradeState.totalExports += total;
+    addTradeLog('export', `Exported ${qty} ${c.unit} of ${c.name} to global market`, total);
+    setStatus(`Exported ${c.name}: +₹${total}`);
+  }
+  recalc();
+  updateTradeSidebar();
+  switchTab('market');
+}
+
+// ── PARTNERS TAB ──
+function renderPartners() {
+  let html = `<div class="trade-section-title">◈ DIPLOMATIC TRADE PARTNERS</div>`;
+  html += `<div class="partner-list">`;
+  COUNTRIES.forEach(country => {
+    const relClass = country.relation >= 65 ? 'good' : country.relation >= 40 ? 'neutral' : 'bad';
+    const relText  = country.relation >= 65 ? 'FRIENDLY' : country.relation >= 40 ? 'NEUTRAL' : 'HOSTILE';
+    const dots = Array(5).fill(0).map((_,i) => {
+      const filled = i < Math.round(country.relation / 20);
+      const cls = filled ? (country.relation>=65?'fill':'fill warn') : '';
+      return `<div class="rel-dot ${cls}"></div>`;
+    }).join('');
+    const sanctioned = country.sanctioned;
+    html += `
+    <div class="partner-card" style="${sanctioned?'opacity:.5;border-color:rgba(255,51,102,0.3)':''}">
+      <div class="partner-flag">${country.flag}</div>
+      <div class="partner-info">
+        <div class="partner-name">${country.name} ${sanctioned?'🚫':''}</div>
+        <div class="partner-rel ${relClass}">◆ ${relText} — ${country.relation}/100</div>
+        <div style="display:flex;gap:3px;margin:4px 0">${dots}</div>
+        <div class="partner-vol">Specialty: ${country.specialty.toUpperCase()} | Trade Vol: ₹${country.tradeVol}</div>
+        <div style="font-size:10px;color:var(--text2);margin-top:2px">
+          Buys: ${country.buys.join(', ')} &nbsp;|&nbsp; Sells: ${country.sells.join(', ')}
+        </div>
+      </div>
+      <div class="partner-actions">
+        <button class="partner-btn deal" onclick="proposeTradeAgreement('${country.id}')" ${sanctioned?'disabled':''}>
+          🤝 Trade Deal
+        </button>
+        <button class="partner-btn deal" onclick="giftAid('${country.id}')" style="background:rgba(255,215,0,0.1);border-color:var(--accent4);color:var(--accent4)" ${sanctioned?'disabled':''}>
+          🎁 Send Aid ₹200
+        </button>
+        <button class="partner-btn sanction" onclick="imposeSanction('${country.id}')" ${sanctioned?'style="background:rgba(0,255,136,0.1);border-color:var(--accent3);color:var(--accent3)"':''}>
+          ${sanctioned ? '✅ Lift Sanction' : '🚫 Sanction'}
+        </button>
+      </div>
+    </div>`;
+  });
+  html += `</div>`;
+  return html;
+}
+
+function proposeTradeAgreement(cid) {
+  const country = COUNTRIES.find(c => c.id === cid);
+  if (country.relation < 40) { setStatus(`⚠ Relations too low with ${country.name}!`); return; }
+  const bonus = Math.round(country.relation * 2);
+  const cost = 500;
+  if (state.budget < cost) { setStatus('⚠ Need ₹500 to negotiate!'); return; }
+  state.budget -= cost;
+  state.trade += bonus;
+  country.relation = Math.min(100, country.relation + 5);
+  country.tradeVol += bonus;
+  addTradeLog('deal', `Trade agreement signed with ${country.name}`, bonus);
+  setStatus(`Deal with ${country.name}! +₹${bonus}/yr trade`);
+  recalc();
+  updateTradeSidebar();
+  switchTab('partners');
+}
+
+function giftAid(cid) {
+  const country = COUNTRIES.find(c => c.id === cid);
+  if (state.budget < 200) { setStatus('⚠ Not enough budget!'); return; }
+  state.budget -= 200;
+  country.relation = Math.min(100, country.relation + 12);
+  addTradeLog('deal', `Sent humanitarian aid to ${country.name}`, 200);
+  setStatus(`Aid sent to ${country.name}. Relations improved!`);
+  updateTradeSidebar();
+  switchTab('partners');
+}
+
+function imposeSanction(cid) {
+  const country = COUNTRIES.find(c => c.id === cid);
+  if (country.sanctioned) {
+    country.sanctioned = false;
+    country.relation = Math.min(100, country.relation + 10);
+    setStatus(`Sanctions lifted on ${country.name}.`);
+    addTradeLog('deal', `Sanctions lifted on ${country.name}`, 0);
+  } else {
+    country.sanctioned = true;
+    country.relation = Math.max(0, country.relation - 20);
+    state.trade = Math.max(0, state.trade - 30);
+    setStatus(`Sanctions imposed on ${country.name}. Trade affected.`);
+    addTradeLog('import', `Sanctions imposed on ${country.name}`, 0);
+  }
+  recalc();
+  switchTab('partners');
+}
+
+// ── ROUTES TAB ──
+function renderRoutes() {
+  let html = `<div class="trade-section-title">◈ ACTIVE TRADE ROUTES</div>`;
+  if (tradeState.activeRoutes.length === 0) {
+    html += `<div style="color:var(--text2);font-size:13px;padding:20px;text-align:center">
+      No active routes. Sign trade agreements with partners to create routes.
+    </div>`;
+  } else {
+    html += `<div class="route-list">`;
+    tradeState.activeRoutes.forEach((r, i) => {
+      html += `
+      <div class="route-card">
+        <div class="route-mode">${r.mode}</div>
+        <div class="route-from">🇮🇳 India</div>
+        <div class="route-arrow">⟶</div>
+        <div class="route-to">${r.flag} ${r.to}</div>
+        <div style="flex:1"></div>
+        <div style="text-align:right">
+          <div class="route-income">+₹${r.income}/yr</div>
+          <div style="font-size:10px;color:var(--text2)">${r.good}</div>
+        </div>
+        <button class="route-cancel" onclick="cancelRoute(${i})">✕</button>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+  html += `<div class="trade-section-title" style="margin-top:20px">◈ ESTABLISH NEW ROUTE</div>`;
+  html += `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">`;
+  COUNTRIES.filter(c => !c.sanctioned && c.relation >= 50).forEach(country => {
+    const good = country.sells[0];
+    html += `<div style="background:#0a1518;border:1px solid var(--border);padding:12px;border-radius:2px">
+      <div style="font-size:20px">${country.flag}</div>
+      <div style="font-weight:700;margin:4px 0">${country.name}</div>
+      <div style="font-size:11px;color:var(--text2)">Via: 🚢 Sea Route</div>
+      <div style="font-size:11px;color:var(--accent4);margin:4px 0">+₹${Math.round(country.relation*1.5)}/yr</div>
+      <button class="trade-action-btn buy" style="width:100%;margin-top:6px" onclick="openRoute('${country.id}')">OPEN ROUTE</button>
+    </div>`;
+  });
+  html += `</div>`;
+  return html;
+}
+
+function openRoute(cid) {
+  const country = COUNTRIES.find(c => c.id === cid);
+  const cost = 300;
+  if (state.budget < cost) { setStatus('⚠ Need ₹300 to establish route!'); return; }
+  if (tradeState.activeRoutes.find(r => r.cid === cid)) { setStatus('Route already exists!'); return; }
+  state.budget -= cost;
+  const income = Math.round(country.relation * 1.5);
+  tradeState.activeRoutes.push({ cid, to: country.name, flag: country.flag, mode:'🚢', good: country.sells[0], income });
+  state.trade += income;
+  addTradeLog('deal', `New sea route opened to ${country.name}`, income);
+  setStatus(`Trade route to ${country.name} opened! +₹${income}/yr`);
+  recalc();
+  updateTradeSidebar();
+  switchTab('routes');
+}
+
+function cancelRoute(idx) {
+  const r = tradeState.activeRoutes[idx];
+  state.trade = Math.max(0, state.trade - r.income);
+  tradeState.activeRoutes.splice(idx, 1);
+  addTradeLog('import', `Trade route to ${r.to} closed`, 0);
+  setStatus(`Route to ${r.to} closed.`);
+  recalc();
+  switchTab('routes');
+}
+
+// ── POLICY TAB ──
+function renderPolicy() {
+  let html = `<div class="trade-section-title">◈ TRADE POLICY CENTER</div>`;
+  html += `<div class="policy-grid">`;
+  TRADE_POLICIES.forEach(p => {
+    const on = tradeState.policies[p.id];
+    html += `
+    <div class="policy-card">
+      <div class="policy-name">${p.name}</div>
+      <div class="policy-desc">${p.desc}</div>
+      <div class="policy-effect">${p.effect.split(',').map(e=>
+        e.includes('+')?`<span class="pos">${e.trim()}</span>`:
+        e.includes('-')?`<span class="neg">${e.trim()}</span>`:e
+      ).join(' &nbsp; ')}</div>
+      <button class="policy-toggle ${on?'on':'off'}" onclick="togglePolicy('${p.id}')">
+        ${on ? '✅ ACTIVE — CLICK TO DISABLE' : '⭕ INACTIVE — CLICK TO ENABLE'}
+      </button>
+    </div>`;
+  });
+  html += `</div>`;
+  return html;
+}
+
+function togglePolicy(pid) {
+  const p = TRADE_POLICIES.find(x => x.id === pid);
+  tradeState.policies[pid] = !tradeState.policies[pid];
+  const on = tradeState.policies[pid];
+  // Apply effects
+  if (pid === 'free_trade') { state.trade = Math.round(state.trade * (on ? 1.3 : 1/1.3)); state.tax_income = Math.round(state.tax_income * (on ? 0.95 : 1/0.95)); }
+  if (pid === 'protectionism') { state.trade = Math.round(state.trade * (on ? 0.8 : 1/0.8)); state.tax_income = Math.round(state.tax_income * (on ? 1.08 : 1/1.08)); }
+  if (pid === 'mssp') { state.food = Math.min(100, state.food + (on ? 20 : -20)); state.happiness += on ? 5 : -5; }
+  if (pid === 'fdi') { state.gdp = Math.round(state.gdp * (on ? 1.1 : 1/1.1)); }
+  addTradeLog('deal', `Policy ${on?'enabled':'disabled'}: ${p.name}`, 0);
+  setStatus(`Policy ${on?'activated':'deactivated'}: ${p.name}`);
+  recalc();
+  switchTab('policy');
+}
+
+// ── TRADE LOG TAB ──
+function renderTradeLog() {
+  let html = `<div class="trade-section-title">◈ TRANSACTION HISTORY</div>`;
+  if (tradeState.tradeLog.length === 0) {
+    html += `<div style="color:var(--text2);padding:20px;text-align:center">No transactions yet.</div>`;
+    return html;
+  }
+  html += `<div class="trade-log">`;
+  [...tradeState.tradeLog].reverse().forEach(entry => {
+    html += `
+    <div class="log-entry ${entry.type}">
+      <span class="log-year">${entry.year}</span>
+      <span class="log-msg">${entry.msg}</span>
+      <span class="log-amount">${entry.amount>0?(entry.type==='export'?'+':'±')+'₹'+entry.amount:''}</span>
+    </div>`;
+  });
+  html += `</div>`;
+  return html;
+}
+
+function addTradeLog(type, msg, amount) {
+  tradeState.tradeLog.push({ type, msg, amount, year: state.year });
+  if (tradeState.tradeLog.length > 50) tradeState.tradeLog.shift();
+}
+
+// ── SIDEBAR ──
+function updateTradeSidebar() {
+  const balance = tradeState.totalExports - tradeState.totalImports;
+  document.getElementById('trade-year').textContent = state.year;
+  document.getElementById('trade-budget').textContent = state.budget.toLocaleString();
+  document.getElementById('ts-exports').textContent = '₹' + tradeState.totalExports;
+  document.getElementById('ts-imports').textContent = '₹' + tradeState.totalImports;
+  const balEl = document.getElementById('ts-balance');
+  balEl.textContent = (balance>=0?'+':'') + '₹' + balance;
+  balEl.style.color = balance >= 0 ? 'var(--accent3)' : 'var(--danger)';
+  document.getElementById('ts-partners').textContent = COUNTRIES.filter(c => !c.sanctioned && c.relation >= 50).length;
+  document.getElementById('ts-routes').textContent = tradeState.activeRoutes.length;
+  const rank = Math.max(1, 12 - Math.floor(state.trade / 50));
+  document.getElementById('ts-rank').textContent = '#' + rank;
+  document.getElementById('ts-coal').textContent = state.coal + ' T';
+  document.getElementById('ts-oil').textContent = state.oil + ' kL';
+  document.getElementById('ts-iron').textContent = state.iron + ' T';
+  document.getElementById('ts-food').textContent = Math.round(state.food) + '%';
+
+  // Sparkline
+  tradeState.exportHistory.push(tradeState.totalExports);
+  if (tradeState.exportHistory.length > 8) tradeState.exportHistory.shift();
+  const maxV = Math.max(1, ...tradeState.exportHistory);
+  const sl = document.getElementById('sparkline');
+  if (sl) {
+    sl.innerHTML = tradeState.exportHistory.map(v =>
+      `<div class="spark-bar" style="height:${Math.round((v/maxV)*38)+2}px"></div>`
+    ).join('');
+  }
+}
+
+// ─── NEXT TURN ───────────────────────────────────────────────────────────────
+function nextTurn() {
+  state.turn++;
+  state.year++;
+  const income = state.tax_income + Math.floor(state.gdp / 10) + state.trade;
+  const expenses = state.maintenance;
+  state.budget += income - expenses;
+
+  // Fluctuate market prices each year
+  fluctuatePrices();
+  // Update politics
+  updatePoliticsPerTurn();
+  // Update military
+  updateMilPerTurn();
+  // Random events
+  triggerEvent();
+  recalc();
+  updateTradeSidebar();
+  checkVictory();
+  setStatus(`Year ${state.year}: Income +₹${income}, Expenses -₹${expenses}`);
+}
+
+// ─── EVENTS ──────────────────────────────────────────────────────────────────
+const EVENT_POOL = [
+  {
+    type:'crisis', title:'🛢 Oil Crisis!',
+    desc:'Global oil prices spike. Your fuel costs skyrocket.',
+    choices:[
+      { label:'Invest in Solar (₹2000)', effect: s => { s.budget -= 2000; s.pollution -= 15; setStatus('Transitioning to renewables!'); } },
+      { label:'Import Oil (₹800)',        effect: s => { s.budget -= 800; setStatus('Short-term fix arranged.'); } },
+    ]
+  },
+  {
+    type:'crisis', title:'📉 Recession',
+    desc:'Economic slowdown hits. Tax revenue drops 30% for this year.',
+    choices:[
+      { label:'Stimulus Package (₹1500)', effect: s => { s.budget -= 1500; s.gdp += 100; s.happiness += 10; } },
+      { label:'Austerity Cuts',           effect: s => { s.happiness -= 10; s.maintenance = Math.floor(s.maintenance * 0.8); } },
+    ]
+  },
+  {
+    type:'info', title:'🌧 Monsoon Season',
+    desc:'Good rains boost agriculture across the nation.',
+    choices:[{ label:'OK', effect: s => { s.food = Math.min(100, s.food + 15); s.happiness += 5; } }]
+  },
+  {
+    type:'good', title:'🤝 Trade Deal Signed',
+    desc:'A neighbouring country offers a favorable trade agreement.',
+    choices:[
+      { label:'Accept Deal', effect: s => { s.trade += 50; s.budget += 300; setStatus('Trade deal accepted! +₹300'); } },
+      { label:'Negotiate Better', effect: s => { if(Math.random()>0.5){ s.trade+=80; s.budget+=500; setStatus('Better deal secured!'); } else { setStatus('Negotiations failed.'); } } },
+    ]
+  },
+  {
+    type:'crisis', title:'🌪 Natural Disaster',
+    desc:'A severe storm damages infrastructure in the region.',
+    choices:[
+      { label:'Emergency Relief (₹1000)', effect: s => { s.budget -= 1000; s.happiness += 8; setStatus('Relief funds deployed.'); } },
+      { label:'Ignore (Risk)', effect: s => { s.happiness -= 15; s.population -= 1000; setStatus('People suffer from neglect.'); } },
+    ]
+  },
+  {
+    type:'good', title:'🏆 Investment Boom',
+    desc:'Foreign investors are eyeing your growing nation.',
+    choices:[
+      { label:'Welcome FDI', effect: s => { s.budget += 1500; s.gdp += 150; setStatus('Foreign investment welcomed! +₹1500'); } },
+      { label:'Protect Industries', effect: s => { s.happiness += 5; setStatus('Domestic industries protected.'); } },
+    ]
+  },
+  {
+    type:'info', title:'👩‍🎓 Education Revolution',
+    desc:'A new literacy drive is proposed.',
+    choices:[
+      { label:'Fund Schools (₹600)', effect: s => { s.budget -= 600; s.education = Math.min(100, s.education+15); s.happiness+=5; } },
+      { label:'Skip for now', effect: s => { setStatus('Education push deferred.'); } },
+    ]
+  },
+  {
+    type:'crisis', title:'🦠 Disease Outbreak',
+    desc:'A health crisis is spreading in crowded areas.',
+    choices:[
+      { label:'Emergency Hospitals (₹1200)', effect: s => { s.budget -= 1200; s.health = Math.min(100, s.health+20); s.happiness+=5; } },
+      { label:'Quarantine (Low Cost)', effect: s => { s.population -= 2000; s.happiness -= 10; s.health += 5; } },
+    ]
+  },
+  {
+    type:'good', title:'⚡ Clean Energy Grant',
+    desc:'International body offers green energy subsidy.',
+    choices:[
+      { label:'Accept Grant (+₹800)', effect: s => { s.budget += 800; s.pollution -= 10; setStatus('Green grant received!'); } },
+      { label:'Decline', effect: s => { setStatus('Grant declined.'); } },
+    ]
+  },
+];
+
+function triggerEvent() {
+  if (Math.random() < 0.65 || state.turn <= 1) {
+    const ev = EVENT_POOL[Math.floor(Math.random() * EVENT_POOL.length)];
+    showEvent(ev);
+  }
+}
+
+function showEvent(ev) {
+  const panel = document.getElementById('events-panel');
+  const card = document.createElement('div');
+  card.className = `event-card ${ev.type === 'good' ? 'good' : ev.type === 'info' ? 'info' : ''}`;
+  let choiceHTML = '';
+  ev.choices.forEach((ch, i) => {
+    choiceHTML += `<button class="choice-btn" onclick="resolveChoice(this,${panel.children.length},${i})">${ch.label}</button>`;
+  });
+  card.innerHTML = `<div class="event-title">${ev.title}</div><div class="event-desc">${ev.desc}</div>${choiceHTML}`;
+  card._ev = ev;
+  panel.insertBefore(card, panel.firstChild);
+  // Keep only 6 events
+  while (panel.children.length > 6) panel.removeChild(panel.lastChild);
+}
+
+function resolveChoice(btn, cardIdx, choiceIdx) {
+  const card = btn.closest('.event-card');
+  const ev = card._ev;
+  ev.choices[choiceIdx].effect(state);
+  card.querySelectorAll('.choice-btn').forEach(b => b.disabled = true);
+  btn.style.background = 'rgba(0,255,136,0.2)';
+  btn.style.borderColor = '#00ff88';
+  btn.style.color = '#00ff88';
+  recalc();
+}
+
+// ─── VICTORY CHECK ───────────────────────────────────────────────────────────
+function checkVictory() {
+  if (state.happiness >= 80 && state.gdp >= 2000 && state.population >= 50000) {
+    showModal('🏆 ECONOMIC SUPERPOWER!', 'Your nation has achieved extraordinary prosperity. GDP soars, citizens thrive. You are a true sovereign leader!', [
+      { label: 'PLAY AGAIN', cls: 'primary', fn: () => location.reload() },
+    ]);
+    return;
+  }
+  if (state.happiness >= 85) {
+    showModal('😊 HAPPY NATION!', 'Your people love you! Happiness is at an all-time high. The world envies your social harmony.', [
+      { label: 'CONTINUE', cls: 'primary', fn: closeModal },
+    ]);
+    return;
+  }
+  if (state.budget <= 0 && state.maintenance > state.tax_income) {
+    showModal('💸 BANKRUPTCY!', 'The treasury is empty and you cannot pay maintenance. Your government has collapsed. Game Over.', [
+      { label: 'TRY AGAIN', cls: 'primary', fn: () => location.reload() },
+    ]);
+  }
+}
+
+// ─── MODAL ───────────────────────────────────────────────────────────────────
+function showModal(title, desc, btns) {
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-desc').textContent = desc;
+  const bb = document.getElementById('modal-btns');
+  bb.innerHTML = '';
+  btns.forEach(b => {
+    const el = document.createElement('button');
+    el.className = `modal-btn ${b.cls}`;
+    el.textContent = b.label;
+    el.onclick = b.fn;
+    bb.appendChild(el);
+  });
+  document.getElementById('modal').style.display = 'flex';
+}
+function closeModal() { document.getElementById('modal').style.display = 'none'; }
+
+// ─── POLITICS SYSTEM ─────────────────────────────────────────────────────────
+const MINISTERS = [
+  { id:'fin',    name:'Arjun Mehta',    role:'Finance Minister',    avatar:'👨‍💼', loyalty:80, corruption:5,  skill:75, fired:false, effect:'GDP +5%, Tax +10%' },
+  { id:'home',   name:'Priya Sharma',   role:'Home Minister',       avatar:'👩‍⚖️', loyalty:70, corruption:10, skill:80, fired:false, effect:'Crime -15, Happiness +3' },
+  { id:'def',    name:'Col. Rajput',    role:'Defence Minister',    avatar:'🎖️', loyalty:90, corruption:2,  skill:85, fired:false, effect:'Security +20' },
+  { id:'health', name:'Dr. Anita Roy',  role:'Health Minister',     avatar:'👩‍⚕️', loyalty:65, corruption:8,  skill:90, fired:false, effect:'Health +15, Happiness +5' },
+  { id:'edu',    name:'Prof. Kapoor',   role:'Education Minister',  avatar:'👨‍🏫', loyalty:75, corruption:4,  skill:80, fired:false, effect:'Education +15' },
+  { id:'agri',   name:'Ravi Patel',     role:'Agriculture Minister',avatar:'👨‍🌾', loyalty:60, corruption:15, skill:65, fired:false, effect:'Food +20, Farmer +8' },
+  { id:'env',    name:'Meera Nair',     role:'Environment Minister',avatar:'👩‍🔬', loyalty:55, corruption:3,  skill:78, fired:false, effect:'Pollution -20' },
+  { id:'infra',  name:'Suresh Kumar',   role:'Infrastructure Min.', avatar:'👷', loyalty:70, corruption:12, skill:72, fired:false, effect:'Connectivity +15' },
+];
+
+const PARTIES = [
+  { id:'you',       name:'National Progress', color:'#b060ff', seats:180, ideology:'Centre' },
+  { id:'opposition',name:'People\'s Alliance', color:'#ff6b00', seats:120, ideology:'Right'  },
+  { id:'left',      name:'Workers Front',      color:'#ff3366', seats:80,  ideology:'Left'   },
+  { id:'regional',  name:'Regional Party',     color:'#00c8ff', seats:60,  ideology:'Centre' },
+  { id:'green',     name:'Green India',         color:'#00ff88', seats:40,  ideology:'Green'  },
+  { id:'ind',       name:'Independents',        color:'#ffd700', seats:63,  ideology:'Mixed'  },
+];
+
+const BILLS = [
+  { id:'gst',     name:'GST Reform Bill',         icon:'💰', desc:'Simplified tax structure. Reduces compliance burden, boosts GDP.', effect:'+GDP ₹200B, +Tax ₹50/yr, -Happiness 3', support:65, passed:false,
+    fn: s => { s.gdp+=200; s.tax_income+=50; s.happiness-=3; } },
+  { id:'green',   name:'Green Energy Act',         icon:'☀️', desc:'Mandates 40% renewable energy by 2030. Reduces pollution.', effect:'-Pollution 30, +Happiness 8, -Budget ₹800', support:58, passed:false,
+    fn: s => { s.pollution=Math.max(0,s.pollution-30); s.happiness+=8; s.budget-=800; } },
+  { id:'farm',    name:'Agricultural Reform Act',  icon:'🌾', desc:'Modernise farming. Controversial but boosts food production.', effect:'+Food 25%, +GDP ₹150B, -Happiness 5', support:42, passed:false,
+    fn: s => { s.food=Math.min(100,s.food+25); s.gdp+=150; s.happiness-=5; } },
+  { id:'anticorr',name:'Anti-Corruption Law',      icon:'⚖️', desc:'Strong penalties for corruption. Reduces corruption but angers bureaucrats.', effect:'-Corruption, +Happiness 10, -Cabinet Loyalty 10', support:72, passed:false,
+    fn: s => { s.happiness+=10; polState.corruption=Math.max(0,polState.corruption-25); } },
+  { id:'ubi',     name:'Universal Basic Income',   icon:'💸', desc:'Monthly payment to all citizens. Very popular but expensive.', effect:'+Happiness 15, +Approval 10, -Budget ₹1500/yr', support:55, passed:false,
+    fn: s => { s.happiness+=15; polState.approval+=10; s.budget-=1500; } },
+  { id:'nsa',     name:'National Security Act',    icon:'🛡️', desc:'Expanded police powers. Reduces crime but affects civil liberties.', effect:'-Crime 20, -Happiness 5, +Approval among conservatives', support:48, passed:false,
+    fn: s => { s.crime=Math.max(0,s.crime-20); s.happiness-=5; polState.approval+=5; } },
+  { id:'edu2',    name:'Education Funding Bill',   icon:'🏫', desc:'Double education budget. Long-term GDP boost.', effect:'+Education 25, +Happiness 6, -Budget ₹600', support:68, passed:false,
+    fn: s => { s.education=Math.min(100,s.education+25); s.happiness+=6; s.budget-=600; } },
+  { id:'infra2',  name:'Mega Infrastructure Plan', icon:'🏗️', desc:'₹2000Cr infrastructure push. Roads, bridges, airports.', effect:'+Connectivity 30, +GDP ₹300B, -Budget ₹2000', support:61, passed:false,
+    fn: s => { s.connectivity+=30; s.gdp+=300; s.budget-=2000; } },
+];
+
+const SCANDALS = [
+  { id:'s1', title:'📰 Budget Leak Scandal',      desc:'Finance Ministry papers leaked to press. Approval hit.', cost:300, approvalHit:-8,  resolved:false },
+  { id:'s2', title:'🏗 Infrastructure Bribery',   desc:'Contractor paid bribes for road contracts.',            cost:500, approvalHit:-12, resolved:false },
+  { id:'s3', title:'📱 Surveillance Controversy', desc:'Govt accused of monitoring opposition phones.',         cost:400, approvalHit:-10, resolved:false },
+  { id:'s4', title:'🌾 Food Subsidy Fraud',       desc:'Subsidies diverted. Farmers didn\'t receive benefits.', cost:600, approvalHit:-15, resolved:false },
+];
+
+let polState = {
+  currentTab: 'cabinet',
+  approval: 50,
+  corruption: 20,
+  term: 1,
+  billsPassed: 0,
+  partyFund: 1000,
+  electionIn: 4,
+  activeScandals: [],
+  electionHeld: false,
+  ministers: JSON.parse(JSON.stringify(MINISTERS)),
+  bills: JSON.parse(JSON.stringify(BILLS)),
+};
+
+function initPolState() {
+  // Randomly trigger 1-2 scandals
+  const s1 = SCANDALS[Math.floor(Math.random()*2)];
+  polState.activeScandals = [{ ...s1 }];
+}
+
+function openPolitics() {
+  updatePolApproval();
+  document.getElementById('politics-screen').classList.add('open');
+  updatePolSidebar();
+  switchPolTab('cabinet');
+}
+function closePolitics() {
+  document.getElementById('politics-screen').classList.remove('open');
+}
+
+function switchPolTab(tab) {
+  polState.currentTab = tab;
+  document.querySelectorAll('.pol-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('ptab-' + tab)?.classList.add('active');
+  const content = document.getElementById('pol-content');
+  if (tab === 'cabinet')    content.innerHTML = renderCabinet();
+  if (tab === 'parliament') content.innerHTML = renderParliament();
+  if (tab === 'bills')      content.innerHTML = renderBills();
+  if (tab === 'election')   content.innerHTML = renderElection();
+  if (tab === 'scandals')   content.innerHTML = renderScandals();
+}
+
+// ── APPROVAL CALC ──
+function updatePolApproval() {
+  let a = 50;
+  a += (state.happiness - 50) * 0.5;
+  a -= polState.corruption * 0.3;
+  a += (state.gdp - 500) * 0.01;
+  a -= polState.activeScandals.filter(s => !s.resolved).length * 5;
+  if (state.energy < 50) a -= 10;
+  if (state.food < 30) a -= 15;
+  polState.approval = Math.max(5, Math.min(95, Math.round(a)));
+  const col = polState.approval >= 60 ? '#00ff88' : polState.approval >= 35 ? '#b060ff' : '#ff3366';
+  const el = document.getElementById('pol-approval-num');
+  if (el) { el.textContent = polState.approval + '%'; el.style.color = col; }
+  const fill = document.getElementById('pol-app-fill');
+  if (fill) { fill.style.width = polState.approval + '%'; fill.style.background = col; }
+}
+
+// ── CABINET TAB ──
+function renderCabinet() {
+  let html = `<div class="pol-section-title">◈ CABINET OF MINISTERS</div>`;
+  html += `<div class="cabinet-grid">`;
+  polState.ministers.forEach((m, i) => {
+    if (m.fired) return;
+    const loyDots = Array(5).fill(0).map((_,j) => `<div class="min-dot ${j<Math.round(m.loyalty/20)?'f':''}"></div>`).join('');
+    const corrBadge = m.corruption > 10 ? `<div class="corruption-badge">⚠ ${m.corruption}% CORR</div>` : '';
+    html += `
+    <div class="minister-card">
+      ${corrBadge}
+      <div class="min-avatar">${m.avatar}</div>
+      <div class="min-name">${m.name}</div>
+      <div class="min-role">${m.role}</div>
+      <div class="min-stat">Skill: ${m.skill}% &nbsp; Loyalty: ${m.loyalty}%</div>
+      <div class="min-stat" style="color:#b060ff;margin-top:2px">${m.effect}</div>
+      <div class="min-loyalty">${loyDots}</div>
+      <div class="min-actions">
+        <button class="min-btn promote" onclick="promoteMinister(${i})">⭐ PROMOTE</button>
+        <button class="min-btn fire" onclick="fireMinister(${i})">🔥 FIRE</button>
+      </div>
+    </div>`;
+  });
+  html += `</div>`;
+  html += `<div class="pol-section-title" style="margin-top:8px">◈ HIRE NEW MINISTER (₹400)</div>`;
+  html += `<div style="display:flex;gap:10px;flex-wrap:wrap">`;
+  const candidates = [
+    { name:'Vikram Bose', role:'Deputy PM', avatar:'🧑‍💼', cost:400 },
+    { name:'Sunita Gill', role:'Women Affairs', avatar:'👩‍💼', cost:400 },
+    { name:'Amar Singh',  role:'Sports Minister', avatar:'🏋️', cost:400 },
+  ];
+  candidates.forEach((c,i) => {
+    html += `<div style="background:#0d0820;border:1px solid var(--border);padding:12px;border-radius:2px;text-align:center;min-width:130px">
+      <div style="font-size:28px">${c.avatar}</div>
+      <div style="font-weight:700;font-size:13px;margin:4px 0">${c.name}</div>
+      <div style="font-size:10px;color:#b060ff;font-family:'Share Tech Mono'">${c.role}</div>
+      <button class="min-btn promote" style="width:100%;margin-top:8px" onclick="hireMinister(${i})">HIRE ₹400</button>
+    </div>`;
+  });
+  html += `</div>`;
+  return html;
+}
+
+function fireMinister(idx) {
+  const m = polState.ministers[idx];
+  m.fired = true;
+  polState.approval = Math.max(5, polState.approval - 3);
+  setStatus(`${m.name} fired from Cabinet.`);
+  updatePolSidebar();
+  switchPolTab('cabinet');
+}
+function promoteMinister(idx) {
+  const m = polState.ministers[idx];
+  if (state.budget < 200) { setStatus('⚠ Need ₹200 for promotion!'); return; }
+  state.budget -= 200;
+  m.loyalty = Math.min(100, m.loyalty + 15);
+  m.skill = Math.min(100, m.skill + 5);
+  setStatus(`${m.name} promoted! Loyalty increased.`);
+  switchPolTab('cabinet');
+}
+function hireMinister(i) {
+  if (state.budget < 400) { setStatus('⚠ Need ₹400!'); return; }
+  state.budget -= 400;
+  setStatus('New minister hired!');
+  updatePolSidebar();
+}
+
+// ── PARLIAMENT TAB ──
+function renderParliament() {
+  const total = PARTIES.reduce((a,p)=>a+p.seats,0);
+  let html = `<div class="pol-section-title">◈ PARLIAMENT — 543 SEATS</div>`;
+
+  // Visual seats
+  html += `<div class="parliament-seats">`;
+  PARTIES.forEach(p => {
+    for (let i = 0; i < Math.round(p.seats / 5); i++) {
+      html += `<div class="seat" style="background:${p.color};border-color:${p.color}" title="${p.name}"></div>`;
+    }
+  });
+  html += `</div>`;
+
+  // Legend
+  html += `<div class="party-legend">`;
+  PARTIES.forEach(p => {
+    const pct = Math.round(p.seats / total * 100);
+    html += `<div class="party-item"><div class="party-dot" style="background:${p.color}"></div><span>${p.name} <strong>${p.seats}</strong> (${pct}%)</span></div>`;
+  });
+  html += `</div>`;
+
+  // Majority check
+  const yourSeats = PARTIES[0].seats;
+  const majority = yourSeats > 271;
+  html += `<div style="background:${majority?'rgba(0,255,136,0.08)':'rgba(255,51,102,0.08)'};border:1px solid ${majority?'rgba(0,255,136,0.3)':'rgba(255,51,102,0.3)'};padding:12px 16px;border-radius:2px;margin-bottom:16px">
+    <div style="font-weight:700;color:${majority?'var(--accent3)':'var(--danger)'}">
+      ${majority?'✅ YOU HAVE MAJORITY GOVERNMENT':'⚠ MINORITY GOVERNMENT — Need coalition support'}
+    </div>
+    <div style="font-size:12px;color:var(--text2);margin-top:4px">
+      Your seats: ${yourSeats}/543 &nbsp;|&nbsp; Majority needed: 272
+    </div>
+  </div>`;
+
+  html += `<div class="pol-section-title">◈ COALITION MANAGEMENT</div>`;
+  html += `<div style="display:flex;flex-direction:column;gap:8px">`;
+  PARTIES.slice(1).forEach(p => {
+    html += `<div style="background:#0d0820;border:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;gap:12px;border-radius:2px">
+      <div class="party-dot" style="background:${p.color};width:16px;height:16px"></div>
+      <div style="flex:1">
+        <div style="font-weight:700">${p.name}</div>
+        <div style="font-size:11px;color:var(--text2)">${p.seats} seats &nbsp;|&nbsp; ${p.ideology}</div>
+      </div>
+      <button onclick="formCoalition('${p.id}')" style="padding:5px 12px;font-family:'Orbitron';font-size:9px;cursor:pointer;background:rgba(176,96,255,0.1);border:1px solid #b060ff;color:#b060ff;border-radius:1px;letter-spacing:1px;transition:all .15s" onmouseover="this.style.background='#b060ff';this.style.color='#000'" onmouseout="this.style.background='rgba(176,96,255,0.1)';this.style.color='#b060ff'">
+        COALITION ₹300
+      </button>
+    </div>`;
+  });
+  html += `</div>`;
+  return html;
+}
+
+function formCoalition(pid) {
+  if (state.budget < 300) { setStatus('⚠ Need ₹300!'); return; }
+  const p = PARTIES.find(x => x.id === pid);
+  state.budget -= 300;
+  PARTIES[0].seats = Math.min(300, PARTIES[0].seats + Math.round(p.seats * 0.3));
+  setStatus(`Coalition with ${p.name}! +${Math.round(p.seats*0.3)} seats`);
+  updatePolSidebar();
+  switchPolTab('parliament');
+}
+
+// ── BILLS TAB ──
+function renderBills() {
+  let html = `<div class="pol-section-title">◈ PENDING LEGISLATION</div><div class="bill-list">`;
+  polState.bills.forEach((b, i) => {
+    if (b.passed) return;
+    const sClass = b.support >= 60 ? 'pass' : b.support >= 45 ? 'close' : 'fail';
+    const sText  = b.support >= 60 ? `✅ ${b.support}% support — LIKELY TO PASS` : b.support >= 45 ? `⚡ ${b.support}% — CLOSE VOTE` : `❌ ${b.support}% — UNLIKELY`;
+    const efParts = b.effect.split(',');
+    const efHtml = efParts.map(e => e.includes('+')?`<span style="color:var(--accent3)">${e.trim()}</span>`:`<span style="color:var(--danger)">${e.trim()}</span>`).join(' &nbsp; ');
+    html += `
+    <div class="bill-card">
+      <div class="bill-top">
+        <span class="bill-icon">${b.icon}</span>
+        <span class="bill-name">${b.name}</span>
+        <span class="bill-support ${sClass}">${sText}</span>
+      </div>
+      <div class="bill-desc">${b.desc}</div>
+      <div class="bill-effect">${efHtml}</div>
+      <div class="bill-actions">
+        <button class="bill-pass-btn" onclick="passBill(${i})" ${b.support<40?'disabled':''}>🏛 PUT TO VOTE</button>
+        <button class="bill-lobby-btn" onclick="lobbyBill(${i})">💰 LOBBY ₹300</button>
+        <button class="bill-reject-btn" onclick="rejectBill(${i})">✕ SHELVE</button>
+      </div>
+    </div>`;
+  });
+  const passedBills = polState.bills.filter(b => b.passed);
+  if (passedBills.length > 0) {
+    html += `<div class="pol-section-title" style="margin-top:16px">◈ PASSED LAWS</div>`;
+    passedBills.forEach(b => {
+      html += `<div style="background:rgba(0,255,136,0.05);border:1px solid rgba(0,255,136,0.2);padding:10px 14px;border-radius:2px;margin-bottom:6px;display:flex;gap:10px;align-items:center">
+        <span style="font-size:18px">${b.icon}</span>
+        <span style="font-weight:700">${b.name}</span>
+        <span style="color:var(--accent3);margin-left:auto;font-family:'Share Tech Mono';font-size:11px">✅ PASSED</span>
+      </div>`;
+    });
+  }
+  html += `</div>`;
+  return html;
+}
+
+function passBill(idx) {
+  const b = polState.bills[idx];
+  const roll = Math.random() * 100;
+  if (roll < b.support) {
+    b.passed = true;
+    b.fn(state);
+    polState.billsPassed++;
+    polState.approval = Math.min(95, polState.approval + 5);
+    setStatus(`✅ ${b.name} PASSED! Effects applied.`);
+    addTradeLog('deal', `Bill passed: ${b.name}`, 0);
+  } else {
+    polState.approval = Math.max(5, polState.approval - 3);
+    setStatus(`❌ ${b.name} FAILED in Parliament!`);
+  }
+  recalc();
+  updatePolSidebar();
+  switchPolTab('bills');
+}
+function lobbyBill(idx) {
+  if (state.budget < 300) { setStatus('⚠ Need ₹300 to lobby!'); return; }
+  state.budget -= 300;
+  polState.bills[idx].support = Math.min(90, polState.bills[idx].support + 15);
+  setStatus(`Lobbied successfully! Support now ${polState.bills[idx].support}%`);
+  switchPolTab('bills');
+}
+function rejectBill(idx) {
+  polState.bills[idx].passed = true; // shelved
+  polState.bills[idx].name += ' [SHELVED]';
+  setStatus('Bill shelved.');
+  switchPolTab('bills');
+}
+
+// ── ELECTION TAB ──
+function renderElection() {
+  const yrsLeft = polState.electionIn;
+  let html = `<div class="pol-section-title">◈ ELECTION STATUS</div>`;
+
+  if (yrsLeft > 0) {
+    html += `<div style="background:#0d0820;border:1px solid var(--border);padding:16px;border-radius:2px;margin-bottom:20px;text-align:center">
+      <div style="font-size:36px;color:#b060ff;font-family:'Orbitron';margin-bottom:8px">${yrsLeft}</div>
+      <div style="color:var(--text2)">Years until next election</div>
+      <div style="margin-top:12px;font-size:12px;color:var(--text2)">Current approval: <strong style="color:${polState.approval>=50?'var(--accent3)':'var(--danger)'}">${polState.approval}%</strong></div>
+      <div style="font-size:11px;color:var(--text2);margin-top:4px">${polState.approval>=50?'🟢 You are likely to WIN the election':'🔴 You are likely to LOSE — improve your approval!'}</div>
+    </div>`;
+    html += `<div class="pol-section-title">◈ PRE-ELECTION STRATEGY</div>`;
+    html += `<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">`;
+    const actions = [
+      { icon:'📺', name:'Media Campaign', cost:500, effect:'+8% Approval', fn: () => { polState.approval=Math.min(95,polState.approval+8); state.budget-=500; } },
+      { icon:'🎁', name:'Populist Scheme', cost:800, effect:'+12% Approval, -Budget', fn: () => { polState.approval=Math.min(95,polState.approval+12); state.budget-=800; } },
+      { icon:'🤝', name:'Rally & Outreach', cost:300, effect:'+5% Approval', fn: () => { polState.approval=Math.min(95,polState.approval+5); state.budget-=300; } },
+      { icon:'💼', name:'Business Fundraise', cost:0, effect:'+₹600 Party Fund', fn: () => { polState.partyFund+=600; } },
+    ];
+    actions.forEach((a,i) => {
+      html += `<div style="background:#0d0820;border:1px solid var(--border);padding:14px;border-radius:2px">
+        <div style="font-size:22px">${a.icon}</div>
+        <div style="font-weight:700;margin:6px 0">${a.name}</div>
+        <div style="font-size:11px;color:#b060ff;font-family:'Share Tech Mono';margin-bottom:10px">${a.effect}</div>
+        <button onclick="electionAction(${i})" style="width:100%;padding:6px;font-family:'Orbitron';font-size:9px;letter-spacing:1px;cursor:pointer;background:rgba(176,96,255,0.1);border:1px solid #b060ff;color:#b060ff;border-radius:1px">
+          ${a.cost>0?'USE — ₹'+a.cost:'USE — FREE'}
+        </button>
+      </div>`;
+    });
+    html += `</div>`;
+    window._elActions = actions;
+  } else {
+    // Election time!
+    html += renderElectionDay();
+  }
+  return html;
+}
+
+window._elActions = [];
+function electionAction(i) {
+  const a = window._elActions[i];
+  if (a.cost > 0 && state.budget < a.cost) { setStatus('⚠ Not enough budget!'); return; }
+  a.fn();
+  recalc();
+  updatePolSidebar();
+  setStatus('Election strategy executed!');
+  switchPolTab('election');
+}
+
+function renderElectionDay() {
+  const yourPoll = polState.approval;
+  const opp = Math.round(100 - yourPoll - 15 + Math.random()*10);
+  const third = Math.round(100 - yourPoll - opp);
+  return `
+  <div class="election-card">
+    <div class="election-title">🗳 GENERAL ELECTION — ${state.year}</div>
+    <div style="color:var(--text2);font-size:13px;margin-bottom:16px">The nation goes to polls. Choose your campaign stance:</div>
+    <div class="candidate-grid">
+      <div class="candidate-card you">
+        <div class="cand-avatar">👤</div>
+        <div class="cand-name">YOU</div>
+        <div class="cand-party" style="color:#b060ff">National Progress</div>
+        <div class="cand-poll">${yourPoll}%</div>
+        <button class="vote-btn" onclick="runElection('win')">🏆 CAMPAIGN HARD</button>
+      </div>
+      <div class="candidate-card">
+        <div class="cand-avatar">🤵</div>
+        <div class="cand-name">Rahul Verma</div>
+        <div class="cand-party" style="color:var(--accent2)">People's Alliance</div>
+        <div class="cand-poll">${opp}%</div>
+        <div style="padding:8px;font-size:10px;color:var(--text2)">Your opponent</div>
+      </div>
+      <div class="candidate-card">
+        <div class="cand-avatar">👩‍💼</div>
+        <div class="cand-name">Leela Bhat</div>
+        <div class="cand-party" style="color:var(--accent3)">Workers Front</div>
+        <div class="cand-poll">${third}%</div>
+        <div style="padding:8px;font-size:10px;color:var(--text2)">Dark horse</div>
+      </div>
+    </div>
+    <button class="vote-btn" onclick="runElection('concede')" style="background:rgba(255,51,102,0.1);border-color:var(--danger);color:var(--danger);width:auto;padding:8px 24px">
+      Concede & Step Down
+    </button>
+  </div>`;
+}
+
+function runElection(choice) {
+  if (choice === 'concede') {
+    showModal('🏳 Conceded Election', 'You stepped down gracefully. The opposition takes power. GAME OVER.', [
+      { label:'PLAY AGAIN', cls:'primary', fn:()=>location.reload() }
+    ]);
+    return;
+  }
+  const win = polState.approval >= 45;
+  polState.electionIn = 5;
+  if (win) {
+    polState.term++;
+    polState.partyFund += 500;
+    state.budget += 1000;
+    PARTIES[0].seats = Math.min(320, PARTIES[0].seats + 20);
+    showModal('🏆 Election Won!', `Congratulations! You won the General Election with ${polState.approval}% approval! Term ${polState.term} begins. The nation trusts you!`, [
+      { label:'CONTINUE RULING', cls:'primary', fn:closeModal }
+    ]);
+    addTradeLog('deal', `Won General Election — Term ${polState.term}`, 0);
+  } else {
+    showModal('😢 Election Lost!', `You lost the election with only ${polState.approval}% approval. The opposition takes over. GAME OVER. Improve your approval rating next time!`, [
+      { label:'TRY AGAIN', cls:'primary', fn:()=>location.reload() }
+    ]);
+  }
+  updatePolSidebar();
+  switchPolTab('cabinet');
+}
+
+// ── SCANDALS TAB ──
+function renderScandals() {
+  let html = `<div class="pol-section-title">◈ ACTIVE SCANDALS</div>`;
+  const active = polState.activeScandals.filter(s => !s.resolved);
+  if (active.length === 0) {
+    html += `<div style="color:var(--accent3);padding:20px;text-align:center;font-size:14px">✅ No active scandals. Clean government!</div>`;
+  } else {
+    active.forEach((s,i) => {
+      html += `<div class="scandal-card">
+        <div class="scandal-title">${s.title}</div>
+        <div class="scandal-desc">${s.desc}</div>
+        <div style="font-size:11px;font-family:'Share Tech Mono';color:var(--danger);margin-top:4px">Approval impact: ${s.approvalHit}%</div>
+        <button class="scandal-resolve" onclick="resolveScandal(${i})">🧹 CONTAIN (₹${s.cost})</button>
+      </div>`;
+    });
+  }
+  html += `<div class="pol-section-title" style="margin-top:16px">◈ ANTI-CORRUPTION MEASURES</div>`;
+  const measures = [
+    { name:'CBI Investigation', cost:400, effect:'-15 Corruption, +8 Approval', fn: () => { polState.corruption=Math.max(0,polState.corruption-15); polState.approval+=8; state.budget-=400; } },
+    { name:'Whistleblower Policy', cost:200, effect:'-10 Corruption, +5 Approval', fn: () => { polState.corruption=Math.max(0,polState.corruption-10); polState.approval+=5; state.budget-=200; } },
+    { name:'Public Audit',  cost:300, effect:'-8 Corruption, Transparency +', fn: () => { polState.corruption=Math.max(0,polState.corruption-8); polState.approval+=4; state.budget-=300; } },
+  ];
+  html += `<div style="display:flex;gap:8px;flex-wrap:wrap">`;
+  measures.forEach((m,i) => {
+    html += `<div style="background:#0d0820;border:1px solid var(--border);padding:12px;border-radius:2px;flex:1;min-width:160px">
+      <div style="font-weight:700;margin-bottom:4px">${m.name}</div>
+      <div style="font-size:11px;color:#b060ff;font-family:'Share Tech Mono';margin-bottom:10px">${m.effect}</div>
+      <button onclick="anticorrMeasure(${i})" style="width:100%;padding:5px;font-family:'Orbitron';font-size:9px;cursor:pointer;background:rgba(176,96,255,0.1);border:1px solid #b060ff;color:#b060ff;border-radius:1px">₹${m.cost}</button>
+    </div>`;
+  });
+  html += `</div>`;
+  window._corrMeasures = measures;
+  return html;
+}
+
+function resolveScandal(idx) {
+  const s = polState.activeScandals[idx];
+  if (state.budget < s.cost) { setStatus('⚠ Not enough budget!'); return; }
+  state.budget -= s.cost;
+  s.resolved = true;
+  polState.approval = Math.min(95, polState.approval + Math.abs(s.approvalHit) * 0.5);
+  setStatus(`Scandal contained! Approval recovering.`);
+  updatePolSidebar();
+  switchPolTab('scandals');
+}
+
+function anticorrMeasure(i) {
+  const m = window._corrMeasures[i];
+  if (state.budget < m.cost) { setStatus('⚠ Not enough budget!'); return; }
+  m.fn();
+  recalc();
+  setStatus('Anti-corruption measure enacted!');
+  updatePolSidebar();
+  switchPolTab('scandals');
+}
+
+function donateToParty() {
+  if (state.budget < 500) { setStatus('⚠ Not enough budget!'); return; }
+  state.budget -= 500;
+  polState.partyFund += 500;
+  polState.approval = Math.min(95, polState.approval + 3);
+  setStatus('₹500 donated to party fund. Approval +3%');
+  updatePolSidebar();
+}
+
+// ── SIDEBAR UPDATE ──
+function updatePolSidebar() {
+  updatePolApproval();
+  polState.electionIn = Math.max(0, 5 - (state.year - 2025) % 5);
+  const el = document.getElementById;
+  const s = (id, v) => { const e = document.getElementById(id); if(e) e.textContent = v; };
+  s('pol-term', polState.term);
+  s('pol-year', state.year);
+  s('pol-election-in', polState.electionIn + ' yrs');
+  s('ps-approval', polState.approval + '%');
+  s('ps-seats', PARTIES[0].seats + '/543');
+  s('ps-coalition', PARTIES[0].seats > 271 ? 'MAJORITY' : 'MINORITY');
+  s('ps-cabinet', polState.ministers.filter(m=>!m.fired).length);
+  s('ps-corruption', polState.corruption > 40 ? 'HIGH' : polState.corruption > 20 ? 'MEDIUM' : 'LOW');
+  s('ps-bills', polState.billsPassed);
+  s('ps-term', polState.term + (polState.term===1?'st':polState.term===2?'nd':'th') + ' Term');
+  s('ps-election', polState.electionIn + ' yrs');
+  s('ps-partyfund', '₹' + polState.partyFund);
+  // Trigger election if needed
+  if (polState.electionIn === 0 && !polState.electionHeld) {
+    polState.electionHeld = true;
+    setTimeout(() => { openPolitics(); switchPolTab('election'); }, 500);
+  }
+}
+
+// Update Politics each year
+function updatePoliticsPerTurn() {
+  polState.partyFund += 200;
+  polState.corruption = Math.min(100, polState.corruption + Math.random() * 3);
+  // Random scandal chance
+  if (Math.random() < 0.2 && polState.activeScandals.filter(s=>!s.resolved).length < 2) {
+    const s = SCANDALS[Math.floor(Math.random() * SCANDALS.length)];
+    polState.activeScandals.push({ ...s, resolved: false });
+    polState.approval = Math.max(5, polState.approval + s.approvalHit);
+    setStatus(`🚨 SCANDAL: ${s.title}`);
+  }
+  // Reset election flag for new cycle
+  if (polState.electionIn > 0) polState.electionHeld = false;
+  updatePolApproval();
+  updatePolSidebar();
+}
+
+
+
+
+// ═══════════════════════════════════════════════════════════
+// ⚔️  MILITARY SYSTEM
+// ═══════════════════════════════════════════════════════════
+const UNIT_DEFS = [
+  { id:'infantry', name:'Infantry Division',  icon:'🪖', type:'ARMY',    count:0, cost:200,  power:10, maintenance:8,  desc:'Ground troops. Backbone of the army.' },
+  { id:'tank',     name:'Tank Battalion',      icon:'🛡️', type:'ARMY',    count:0, cost:500,  power:40, maintenance:20, desc:'Armoured units. High attack power.' },
+  { id:'artillery',name:'Artillery Corps',     icon:'💥', type:'ARMY',    count:0, cost:400,  power:30, maintenance:15, desc:'Long-range firepower support.' },
+  { id:'frigate',  name:'Navy Frigate',        icon:'🚢', type:'NAVY',    count:0, cost:800,  power:50, maintenance:30, desc:'Naval combat vessel.' },
+  { id:'submarine',name:'Submarine',           icon:'🤿', type:'NAVY',    count:0, cost:1200, power:70, maintenance:40, desc:'Stealth underwater warfare.' },
+  { id:'jet',      name:'Fighter Jet',         icon:'✈️', type:'AIR',     count:0, cost:800,  power:60, maintenance:35, desc:'Air superiority fighter.' },
+  { id:'bomber',   name:'Bomber Squadron',     icon:'💣', type:'AIR',     count:0, cost:1000, power:80, maintenance:45, desc:'Strategic bombing capability.' },
+  { id:'missile',  name:'Missile Battery',     icon:'🚀', type:'MISSILE', count:0, cost:600,  power:55, maintenance:25, desc:'Surface-to-surface missiles.' },
+];
+const ENEMIES = [
+  { id:'small',  name:'Border Skirmish', flag:'⚔️',  strength:50,  reward:800,  desc:'Minor border conflict.',          riskMsg:'Low casualties expected.' },
+  { id:'medium', name:'Regional Rival',  flag:'🇵🇰', strength:200, reward:2000, desc:'Conflict with regional rival.',    riskMsg:'Moderate military losses.' },
+  { id:'large',  name:'Major Power',     flag:'🇺🇸', strength:500, reward:5000, desc:'Full-scale war with major power.', riskMsg:'⚠ HIGH RISK!' },
+  { id:'terror', name:'Terror Network',  flag:'💀',  strength:80,  reward:1200, desc:'Counter-terrorism operation.',     riskMsg:'Special forces operation.' },
+  { id:'piracy', name:'Naval Pirates',   flag:'🏴‍☠️', strength:60,  reward:900,  desc:'Protect trade routes.',           riskMsg:'Naval engagement.' },
+];
+let milState = {
+  currentTab:'units', units:JSON.parse(JSON.stringify(UNIT_DEFS)),
+  militaryPower:0, defenceBudget:0, warsWon:0, atWar:false,
+  currentEnemy:null, ourHP:100, globalThreat:20, warLog:[], nukes:0,
+  defences:{radar:false,bunker:false,cyber:false,border:false}, allies:[],
+  battleLog:[],
+};
+function calcMilPower() {
+  milState.militaryPower = milState.units.reduce((s,u)=>s+u.count*u.power,0);
+  milState.defenceBudget = milState.units.reduce((s,u)=>s+u.count*u.maintenance,0);
+  return milState.militaryPower;
+}
+function openMilitary() { calcMilPower(); document.getElementById('military-screen').classList.add('open'); updateMilSidebar(); switchMilTab('units'); playSound('open'); }
+function closeMilitary() { document.getElementById('military-screen').classList.remove('open'); }
+function switchMilTab(tab) {
+  milState.currentTab=tab;
+  document.querySelectorAll('.mil-tab').forEach(t=>t.classList.remove('active'));
+  const te=document.getElementById('mtab-'+tab); if(te) te.classList.add('active');
+  const c=document.getElementById('mil-content'); if(!c) return;
+  if(tab==='units')   c.innerHTML=renderUnits();
+  if(tab==='war')     c.innerHTML=renderWarRoom();
+  if(tab==='defence') c.innerHTML=renderDefence();
+  if(tab==='intel')   c.innerHTML=renderIntel();
+  if(tab==='millog')  c.innerHTML=renderMilLog();
+}
+function renderUnits() {
+  const byType={ARMY:[],NAVY:[],AIR:[],MISSILE:[]};
+  milState.units.forEach(u=>byType[u.type].push(u));
+  let html=`<div class="mil-section-title">◈ ARMED FORCES COMMAND</div>`;
+  for(const[type,units] of Object.entries(byType)){
+    const icons={ARMY:'🪖',NAVY:'⚓',AIR:'✈️',MISSILE:'🚀'};
+    html+=`<div style="font-size:10px;letter-spacing:2px;color:var(--text2);margin:10px 0 6px">${icons[type]} ${type}</div><div class="units-grid">`;
+    units.forEach(u=>{
+      const idx=milState.units.findIndex(x=>x.id===u.id);
+      const qty=u.type==='ARMY'?1000:10;
+      html+=`<div class="unit-card"><div class="unit-icon">${u.icon}</div><div class="unit-name">${u.name}</div>
+        <div class="unit-type">${u.type}</div><div class="unit-stats">PWR:${u.power} | MNT:₹${u.maintenance}</div>
+        <div class="unit-count">${u.count}<span style="font-size:11px;color:var(--text2)"> units</span></div>
+        <div style="font-size:10px;color:var(--text2);margin-bottom:8px">${u.desc}</div>
+        <button class="unit-btn" onclick="recruitUnit(${idx})" ${state.budget<u.cost?'disabled':''}>RECRUIT ₹${u.cost}</button></div>`;
+    });
+    html+=`</div>`;
+  }
+  html+=`<div class="mil-section-title" style="margin-top:8px">◈ NUCLEAR PROGRAMME</div>
+  <div style="background:#0d0800;border:1px solid rgba(255,51,102,0.3);padding:16px;border-radius:2px;display:flex;gap:16px;align-items:center">
+    <div style="font-size:40px">☢️</div>
+    <div style="flex:1"><div style="font-weight:700">Warheads: <span style="color:var(--danger)">${milState.nukes}</span></div>
+    <div style="font-size:11px;color:var(--text2)">Massive deterrent. Cost: ₹3000</div></div>
+    <button onclick="developNuke()" style="padding:8px 16px;font-family:'Orbitron';font-size:9px;cursor:pointer;background:rgba(255,51,102,0.1);border:1px solid var(--danger);color:var(--danger);border-radius:1px;letter-spacing:1px">DEVELOP ₹3000</button>
+  </div>`;
+  return html;
+}
+function recruitUnit(idx) {
+  const u=milState.units[idx]; if(state.budget<u.cost){toast('⚠ Not enough budget!','warn');return;}
+  const qty=u.type==='ARMY'?1000:10; state.budget-=u.cost; u.count+=qty;
+  calcMilPower(); toast(`Recruited ${qty} ${u.name}!`,'good'); playSound('build');
+  spawnParticlesAt(window.innerWidth/2, window.innerHeight/2, '#ff6b00');
+  updateMilSidebar(); switchMilTab('units');
+}
+function quickRecruit(type){const map={infantry:0,tank:1,jet:5};recruitUnit(map[type]);}
+function developNuke(){if(state.budget<3000){toast('⚠ Need ₹3000!','warn');return;}state.budget-=3000;milState.nukes++;milState.globalThreat=Math.min(100,milState.globalThreat+20);toast('☢️ Nuke developed! Global threat up.','warn');updateMilSidebar();}
+function renderWarRoom() {
+  let html=`<div class="mil-section-title">◈ WAR ROOM — POWER: ${milState.militaryPower}</div>`;
+  html+=`<div style="background:rgba(255,107,0,0.06);border:1px solid rgba(255,107,0,0.25);padding:12px;border-radius:2px;margin-bottom:16px;font-size:12px;color:var(--text2)">
+    ⚠ War reduces happiness. Your power: <strong style="color:#ff6b00">${milState.militaryPower}</strong></div>`;
+  html+=`<div class="nation-grid">`;
+  ENEMIES.forEach(e=>{
+    const wc=Math.min(95,Math.round((milState.militaryPower/Math.max(1,e.strength))*60));
+    const col=wc>=60?'var(--accent3)':wc>=35?'var(--accent4)':'var(--danger)';
+    html+=`<div class="enemy-card"><div class="enemy-flag">${e.flag}</div><div class="enemy-name">${e.name}</div>
+      <div class="enemy-strength" style="color:var(--danger)">STR: ${e.strength}</div>
+      <div style="font-size:11px;color:${col};font-family:'Share Tech Mono';margin-bottom:6px">WIN: ${wc}%</div>
+      <div class="enemy-reward">Reward: ₹${e.reward}</div>
+      <div style="font-size:10px;color:var(--text2);margin-bottom:10px">${e.riskMsg}</div>
+      <button class="war-btn" onclick="startWar('${e.id}')">⚔️ DECLARE WAR</button></div>`;
+  });
+  html+=`</div><div class="mil-section-title" style="margin-top:8px">◈ DIPLOMACY</div>
+  <div style="display:flex;gap:10px">
+    <div style="flex:1;background:#0d0800;border:1px solid var(--border);padding:14px;border-radius:2px">
+      <div style="font-weight:700;margin-bottom:6px">🕊 Peace Treaty</div>
+      <div style="font-size:11px;color:var(--text2);margin-bottom:10px">Reduce global threat via diplomacy.</div>
+      <button onclick="seekPeace()" style="width:100%;padding:6px;font-family:'Orbitron';font-size:9px;cursor:pointer;background:rgba(0,200,255,0.1);border:1px solid var(--accent);color:var(--accent);border-radius:1px">PEACE ₹500</button>
+    </div>
+    <div style="flex:1;background:#0d0800;border:1px solid var(--border);padding:14px;border-radius:2px">
+      <div style="font-weight:700;margin-bottom:6px">🤝 Form Alliance</div>
+      <div style="font-size:11px;color:var(--text2);margin-bottom:10px">Military alliance for mutual defence.</div>
+      <button onclick="formAlliance()" style="width:100%;padding:6px;font-family:'Orbitron';font-size:9px;cursor:pointer;background:rgba(0,255,136,0.1);border:1px solid var(--accent3);color:var(--accent3);border-radius:1px">ALLY ₹600</button>
+    </div>
+  </div>`;
+  return html;
+}
+function startWar(enemyId) {
+  const enemy=ENEMIES.find(e=>e.id===enemyId);
+  milState.atWar=true; milState.currentEnemy={...enemy,currentHP:enemy.strength,maxHP:enemy.strength}; milState.ourHP=100;
+  state.happiness-=8; playSound('alarm'); toast(`🔥 WAR: ${enemy.name}!`,'danger');
+  setTimeout(resolveBattle,600);
+  switchMilTab('war');
+}
+function resolveBattle() {
+  const e=milState.currentEnemy; if(!e) return;
+  const won=Math.random()*100<Math.min(90,(milState.militaryPower/Math.max(1,e.strength))*60);
+  milState.atWar=false; milState.currentEnemy=null;
+  if(won){
+    state.budget+=e.reward; milState.warsWon++; polState.approval=Math.min(95,polState.approval+10);
+    state.happiness+=5; milState.globalThreat=Math.max(10,milState.globalThreat-10);
+    milState.units.forEach(u=>{if(u.count>0)u.count=Math.max(0,u.count-Math.floor(u.count*0.1));});
+    toast(`🏆 VICTORY! +₹${e.reward}`,'good'); playSound('victory');
+    spawnParticlesAt(window.innerWidth/2,window.innerHeight/3,'#ffd700');
+    addMilLog(`WAR WON vs ${e.name}. +₹${e.reward}`);
+  } else {
+    state.budget-=500; state.happiness-=15; polState.approval=Math.max(5,polState.approval-15);
+    milState.units.forEach(u=>{if(u.count>0)u.count=Math.max(0,u.count-Math.floor(u.count*0.25));});
+    toast('💀 DEFEAT! Heavy losses.','danger'); playSound('alarm');
+    addMilLog(`WAR LOST vs ${e.name}. -₹500`);
+  }
+  calcMilPower(); recalc(); updateMilSidebar(); switchMilTab('war');
+}
+function seekPeace(){if(state.budget<500){toast('⚠ Need ₹500!','warn');return;}state.budget-=500;milState.globalThreat=Math.max(10,milState.globalThreat-15);toast('🕊 Peace treaty signed.','good');updateMilSidebar();}
+function formAlliance(){if(state.budget<600){toast('⚠ Need ₹600!','warn');return;}state.budget-=600;milState.militaryPower+=100;milState.globalThreat=Math.max(10,milState.globalThreat-20);toast('🤝 Alliance formed! +100 power.','good');updateMilSidebar();}
+function renderDefence(){
+  let html=`<div class="mil-section-title">◈ HOMELAND DEFENCE</div><div class="defence-grid">`;
+  [{id:'radar',name:'🛰 Radar Network',cost:600,desc:'Early warning system.',effect:'+20 Defence'},{id:'bunker',name:'🏰 Underground Bunkers',cost:800,desc:'Protect leadership.',effect:'+30 Survival'},{id:'cyber',name:'💻 Cyber Command',cost:700,desc:'Cyber warfare.',effect:'+Cyber attacks'},{id:'border',name:'🧱 Border Fortification',cost:500,desc:'Smart surveillance.',effect:'-Infiltration'}].forEach(d=>{
+    const active=milState.defences[d.id];
+    html+=`<div class="defence-card" style="border-color:${active?'rgba(0,255,136,0.4)':'var(--border)'}">
+      <div class="def-name">${d.name} ${active?'<span style="color:var(--accent3);font-size:11px">✅</span>':''}</div>
+      <div class="def-desc">${d.desc}</div><div style="font-size:11px;font-family:\'Share Tech Mono\';color:#ff6b00;margin-bottom:10px">${d.effect}</div>
+      <button class="def-btn" onclick="buildDefence('${d.id}',${d.cost})" ${active?'disabled':''}>${active?'BUILT':'BUILD ₹'+d.cost}</button></div>`;
+  });
+  return html+`</div>`;
+}
+function buildDefence(id,cost){if(state.budget<cost){toast('⚠ Not enough!','warn');return;}state.budget-=cost;milState.defences[id]=true;milState.militaryPower+=30;toast(`Defence built: ${id}!`,'good');playSound('build');updateMilSidebar();switchMilTab('defence');}
+function renderIntel(){
+  const col=milState.globalThreat>70?'var(--danger)':milState.globalThreat>40?'var(--accent4)':'var(--accent3)';
+  const lbl=milState.globalThreat>70?'🔴 CRITICAL':milState.globalThreat>40?'🟡 ELEVATED':'🟢 LOW';
+  let html=`<div class="mil-section-title">◈ INTELLIGENCE</div>
+  <div style="background:#0d0800;border:1px solid rgba(255,107,0,0.3);padding:16px;border-radius:2px;margin-bottom:16px">
+    <div style="font-size:18px;font-weight:700;color:${col}">${lbl}</div>
+    <div style="height:6px;background:#1a0800;border-radius:3px;margin-top:8px;overflow:hidden">
+      <div style="height:100%;width:${milState.globalThreat}%;background:${col};transition:width .5s"></div></div></div>
+  <div class="mil-section-title">◈ SPY OPERATIONS</div><div style="display:flex;gap:10px">`;
+  [['🕵️','Spy Mission',300,10,5],['💻','Cyber Attack',500,20,10],['🧨','Sabotage',800,30,15]].forEach(([icon,name,cost,pwr,thr],i)=>{
+    html+=`<div style="flex:1;background:#0d0800;border:1px solid var(--border);padding:12px;border-radius:2px;text-align:center">
+      <div style="font-size:28px">${icon}</div><div style="font-weight:700;margin:6px 0">${name}</div>
+      <div style="font-size:10px;color:var(--text2);margin-bottom:8px">+${pwr} power, -${thr} threat</div>
+      <button onclick="spyOp(${i},${cost},${pwr},${thr})" style="width:100%;padding:5px;font-family:'Orbitron';font-size:9px;cursor:pointer;background:rgba(255,107,0,0.1);border:1px solid #ff6b00;color:#ff6b00;border-radius:1px">₹${cost}</button></div>`;
+  });
+  return html+`</div>`;
+}
+function spyOp(type,cost,pwr,thr){if(state.budget<cost){toast('⚠ Not enough!','warn');return;}state.budget-=cost;milState.militaryPower+=pwr;milState.globalThreat=Math.max(0,milState.globalThreat-thr);toast('🕵️ Operation success!','good');updateMilSidebar();}
+function renderMilLog(){
+  let html=`<div class="mil-section-title">◈ WAR HISTORY</div>`;
+  if(!milState.warLog.length) return html+`<div style="color:var(--text2);padding:20px;text-align:center">No military actions yet.</div>`;
+  return html+`<div style="display:flex;flex-direction:column;gap:6px">`+[...milState.warLog].reverse().map(l=>
+    `<div style="background:#0d0800;border-left:2px solid ${l.msg.includes('WON')?'var(--accent3)':'var(--danger)'};padding:10px 14px;font-family:'Share Tech Mono';font-size:11px;display:flex;gap:12px">
+      <span style="color:var(--text2)">${l.year}</span><span style="color:${l.msg.includes('WON')?'var(--accent3)':'var(--danger)'}">${l.msg}</span></div>`
+  ).join('')+`</div>`;
+}
+function addMilLog(msg){milState.warLog.push({year:state.year,msg});}
+function updateMilSidebar(){
+  calcMilPower();
+  const s=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+  s('mil-year',state.year); s('mil-power-display',milState.militaryPower);
+  s('ms-army',milState.units.filter(u=>u.type==='ARMY').reduce((a,u)=>a+u.count,0).toLocaleString());
+  s('ms-navy',milState.units.filter(u=>u.type==='NAVY').reduce((a,u)=>a+u.count,0));
+  s('ms-air', milState.units.filter(u=>u.type==='AIR').reduce((a,u)=>a+u.count,0));
+  s('ms-nuke',milState.nukes>0?`☢️ ${milState.nukes}`:'None');
+  s('ms-power',milState.militaryPower); s('ms-budget',`₹${milState.defenceBudget}/yr`);
+  s('ms-wars',milState.warsWon); s('ms-atwar',milState.atWar?'⚔️ YES':'No');
+  const tf=document.getElementById('threat-fill'),tl=document.getElementById('threat-label');
+  if(tf) tf.style.width=milState.globalThreat+'%';
+  if(tl) tl.textContent=milState.globalThreat>70?'🔴 CRITICAL':milState.globalThreat>40?'🟡 ELEVATED':'🟢 LOW';
+}
+function updateMilPerTurn(){milState.globalThreat=Math.min(100,milState.globalThreat+Math.random()*3);state.budget=Math.max(0,state.budget-milState.defenceBudget);calcMilPower();}
+
+// ═══════════════════════════════════════════════════════════
+// 💾  SAVE / LOAD
+// ═══════════════════════════════════════════════════════════
+function saveGame(){
+  const data={state:JSON.parse(JSON.stringify(state)),polState:JSON.parse(JSON.stringify(polState)),milState:JSON.parse(JSON.stringify(milState)),tradeState:JSON.parse(JSON.stringify(tradeState)),year:state.year,version:'2.0'};
+  delete data.state.selectedBuild;
+  try{
+    const blob=new Blob([JSON.stringify(data)],{type:'application/json'});
+    const url=URL.createObjectURL(blob); const a=document.createElement('a');
+    a.href=url; a.download=`sovereign_yr${state.year}.json`; a.click(); URL.revokeObjectURL(url);
+    showSaveFlash('💾 SAVED!'); toast('Game saved!','good'); playSound('save');
+  }catch(e){toast('Save error: '+e.message,'danger');}
+}
+function loadGame(){
+  const input=document.createElement('input'); input.type='file'; input.accept='.json';
+  input.onchange=e=>{
+    const file=e.target.files[0]; if(!file) return;
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      try{
+        const data=JSON.parse(ev.target.result);
+        Object.assign(state,data.state); Object.assign(polState,data.polState);
+        Object.assign(milState,data.milState); Object.assign(tradeState,data.tradeState);
+        Object.keys(state.grid).forEach(key=>{const[r,c]=key.split(',').map(Number);renderTile(r,c);});
+        recalc(); showSaveFlash('📂 LOADED!'); toast(`Loaded! Year ${state.year}`,'good'); playSound('save');
+      }catch(err){toast('Load failed: '+err.message,'danger');}
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+function showSaveFlash(msg){const el=document.createElement('div');el.className='save-flash';el.textContent=msg;document.body.appendChild(el);setTimeout(()=>el.remove(),900);}
+
+// ═══════════════════════════════════════════════════════════
+// 🔊  SOUND (Web Audio API)
+// ═══════════════════════════════════════════════════════════
+let audioCtx=null;
+function getAudioCtx(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+function playSound(type){
+  try{
+    const ctx=getAudioCtx();
+    const notes={build:[[523,.1],[659,.1],[784,.15]],open:[[300,.08],[400,.08]],alarm:[[200,.2],[200,.2],[300,.3]],victory:[[523,.1],[659,.1],[784,.1],[1047,.3]],save:[[440,.1],[880,.15]],nextTurn:[[262,.08],[330,.08],[392,.08],[523,.12]]}[type]||[[600,.05]];
+    let t=ctx.currentTime;
+    notes.forEach(([freq,dur])=>{const osc=ctx.createOscillator();osc.type=type==='alarm'?'sawtooth':'sine';osc.frequency.setValueAtTime(freq,t);const g=ctx.createGain();g.gain.setValueAtTime(0.12,t);g.gain.exponentialRampToValueAtTime(0.001,t+dur);osc.connect(g);g.connect(ctx.destination);osc.start(t);osc.stop(t+dur);t+=dur;});
+  }catch(e){}
+}
+
+// ═══════════════════════════════════════════════════════════
+// ✨  PARTICLES
+// ═══════════════════════════════════════════════════════════
+const pCanvas=document.getElementById('particle-canvas');
+const pCtx=pCanvas?pCanvas.getContext('2d'):null;
+let particles=[];
+function resizePCanvas(){if(!pCanvas)return;pCanvas.width=window.innerWidth;pCanvas.height=window.innerHeight;}
+window.addEventListener('resize',resizePCanvas); resizePCanvas();
+class Particle{constructor(x,y,c){this.x=x;this.y=y;this.color=c;this.vx=(Math.random()-.5)*6;this.vy=(Math.random()-.5)*6-2;this.life=1;this.decay=.02+Math.random()*.03;this.size=3+Math.random()*4;}
+  update(){this.x+=this.vx;this.y+=this.vy;this.vy+=.1;this.life-=this.decay;}
+  draw(c){c.save();c.globalAlpha=this.life;c.fillStyle=this.color;c.beginPath();c.arc(this.x,this.y,this.size,0,Math.PI*2);c.fill();c.restore();}}
+function spawnParticlesAt(x,y,color='#00c8ff',count=40){for(let i=0;i<count;i++)particles.push(new Particle(x+(Math.random()-.5)*80,y+(Math.random()-.5)*80,color));}
+function spawnParticlesAll(color='#ffd700'){for(let i=0;i<60;i++)particles.push(new Particle(Math.random()*window.innerWidth,Math.random()*window.innerHeight*.5,color));}
+function animParticles(){if(pCtx){pCtx.clearRect(0,0,pCanvas.width,pCanvas.height);particles=particles.filter(p=>p.life>0);particles.forEach(p=>{p.update();p.draw(pCtx);});}requestAnimationFrame(animParticles);}
+animParticles();
+
+// ═══════════════════════════════════════════════════════════
+// 🔔  TOAST NOTIFICATIONS
+// ═══════════════════════════════════════════════════════════
+function toast(msg,type='info'){
+  setStatus(msg);
+  const c=document.getElementById('toast-container'); if(!c) return;
+  const t=document.createElement('div');
+  t.className='toast'+(type==='warn'?' warn':type==='danger'?' danger':type==='good'?' good':'');
+  t.textContent=msg; c.appendChild(t); setTimeout(()=>t.remove(),3000);
+}
+function setStatus(msg){const el=document.getElementById('status-msg');if(el)el.textContent=msg;}
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+initMap();
+initTradeState();
+initPolState();
+calcMilPower();
+recalc();
+animParticles();
+
+// Welcome modal
+showModal('🏛 SOVEREIGN: The Lone Leader', 
+  'You are the Leader. Build infrastructure, manage your economy, respond to crises, and guide your nation to greatness. Click tiles to place buildings. Press NEXT YEAR to advance time.',
+  [{ label: 'BEGIN RULING', cls: 'primary', fn: closeModal }]
+);
+</script>
+</body>
+</html>
